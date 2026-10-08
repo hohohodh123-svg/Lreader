@@ -5,9 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport"
  content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Linh Reader</title>
-
+<title>Linh Reader v12</title>
 <link rel="manifest" href="manifest.json">
+
 <meta name="theme-color" content="#f6f0e4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style"
@@ -20,8 +20,8 @@
 
 html,body {
   margin:0;
+  min-height:100%;
   width:100%;
-  height:100%;
   font-family:-apple-system,BlinkMacSystemFont,
     "Segoe UI",Arial,sans-serif;
   background:#eee8dc;
@@ -33,26 +33,21 @@ button {
   border-radius:9px;
   padding:9px 11px;
   font-size:15px;
-  background:#ddd6c8;
   color:#222;
+  background:#ddd6c8;
   cursor:pointer;
 }
 
-button:active { opacity:.65; }
 .hidden { display:none!important; }
 
-/* TỦ SÁCH */
-
-#libraryScreen { min-height:100%; }
+#libraryScreen { min-height:100vh; }
 
 .libraryHeader {
   min-height:62px;
   display:flex;
-  position:sticky;
-  top:0;
-  z-index:10;
   align-items:center;
   justify-content:space-between;
+  gap:10px;
   padding:10px 14px;
   background:#f6f0e4;
   border-bottom:1px solid #ccc;
@@ -63,25 +58,58 @@ button:active { opacity:.65; }
   font-size:19px;
 }
 
-.addBookLabel {
+/* INPUT THẬT NẰM TRÊN NÚT.
+   Không dùng display:none trên iPhone. */
+
+.addFileControl {
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:8px 12px;
   background:#d8cfbf;
-  padding:10px;
   border-radius:9px;
   font-size:14px;
-  cursor:pointer;
+  font-weight:600;
+  overflow:hidden;
 }
 
-#pdfInput { display:none; }
+.addFileControl span {
+  pointer-events:none;
+}
+
+#pdfInput {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  cursor:pointer;
+  font-size:100px;
+}
+
+#pdfInput:disabled {
+  cursor:wait;
+}
+
+#health {
+  margin:0;
+  padding:8px 14px;
+  font-size:12px;
+  background:#e8e1d5;
+  color:#555;
+}
 
 #libraryContent {
   max-width:760px;
-  padding:16px 12px 40px;
   margin:auto;
+  padding:16px 12px 40px;
 }
 
 #libraryEmpty {
   text-align:center;
-  margin-top:95px;
+  margin-top:75px;
   color:#777;
 }
 
@@ -93,7 +121,7 @@ button:active { opacity:.65; }
 }
 
 .bookCard {
-  min-height:220px;
+  min-height:215px;
   background:#f8f3e9;
   padding:12px;
   border-radius:12px;
@@ -108,16 +136,16 @@ button:active { opacity:.65; }
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:40px;
   background:#d9ceba;
   border-radius:9px;
+  font-size:40px;
   margin-bottom:10px;
 }
 
 .bookTitle {
-  font-weight:600;
   font-size:14px;
   line-height:1.4;
+  font-weight:600;
   overflow-wrap:anywhere;
   margin-bottom:8px;
 }
@@ -130,10 +158,10 @@ button:active { opacity:.65; }
 
 .progressTrack {
   height:5px;
-  margin-top:8px;
   background:#ddd;
-  border-radius:9px;
+  border-radius:8px;
   overflow:hidden;
+  margin-top:8px;
 }
 
 .progressBar {
@@ -150,24 +178,24 @@ button:active { opacity:.65; }
 .openBookBtn { flex:1; }
 .deleteBookBtn { width:42px; }
 
-/* THÔNG BÁO */
-
 #statusBox {
+  display:none;
   position:fixed;
-  top:74px;
+  z-index:100;
+  top:80px;
   left:50%;
   transform:translateX(-50%);
-  z-index:100;
-  display:none;
+  width:max-content;
+  max-width:92vw;
   padding:12px 16px;
   border-radius:11px;
-  max-width:90vw;
-  background:rgba(25,25,25,.9);
+  background:#222;
   color:#fff;
   font-size:14px;
+  line-height:1.5;
   text-align:center;
   white-space:pre-line;
-  line-height:1.5;
+  box-shadow:0 3px 12px rgba(0,0,0,.25);
 }
 
 /* MÀN HÌNH ĐỌC */
@@ -175,9 +203,9 @@ button:active { opacity:.65; }
 #readerScreen {
   position:fixed;
   inset:0;
+  overflow:hidden;
   z-index:50;
   background:#eee8dc;
-  overflow:hidden;
 }
 
 .readerHeader {
@@ -224,13 +252,13 @@ button:active { opacity:.65; }
 
 #pdfCanvas {
   display:none;
-  background:white;
   max-width:100%;
   height:auto;
+  background:white;
   box-shadow:0 2px 10px rgba(0,0,0,.2);
 }
 
-/* READER MODE - CĂN ĐỀU HAI LỀ */
+/* READER MODE CĂN ĐỀU */
 
 #readerView {
   display:none;
@@ -251,17 +279,9 @@ button:active { opacity:.65; }
   line-height:1.72;
 }
 
-.readerParagraph {
-  margin:0 0 1.05em;
-}
-
-.readerDialogue {
-  margin:0 0 1em;
-}
-
-.readerBullet {
-  margin:0 0 .7em;
-}
+.readerParagraph { margin:0 0 1.05em; }
+.readerDialogue { margin:0 0 1em; }
+.readerBullet { margin:0 0 .7em; }
 
 .readerHeading {
   text-align:left;
@@ -279,11 +299,11 @@ button:active { opacity:.65; }
   right:0;
   min-height:62px;
   padding:5px 3px;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
   background:#f6f0e4;
   border-top:1px solid #ccc;
-  display:flex;
-  align-items:center;
-  justify-content:space-around;
   z-index:20;
   transition:transform .22s,opacity .22s;
 }
@@ -294,8 +314,8 @@ button:active { opacity:.65; }
 }
 
 #pageInfo {
-  font-size:12px;
   min-width:46px;
+  font-size:12px;
   text-align:center;
 }
 
@@ -315,8 +335,6 @@ button:active { opacity:.65; }
   top:0;
   bottom:0;
 }
-
-/* MÀU GIẤY */
 
 #readerScreen.sepia {
   background:#e9dfc7;
@@ -363,17 +381,23 @@ button:active { opacity:.65; }
 
 <body>
 
-<div id="statusBox"></div>
+<div id="statusBox" role="status"
+ aria-live="polite"></div>
 
 <section id="libraryScreen">
   <div class="libraryHeader">
     <h1>📚 Linh Reader</h1>
-    <label class="addBookLabel" for="pdfInput">
-      ＋ Thêm sách
-    </label>
-    <input id="pdfInput" type="file"
-      accept=".pdf,application/pdf" multiple>
+
+    <div class="addFileControl">
+      <span>＋ Thêm sách</span>
+      <input id="pdfInput"
+        type="file"
+        accept=".pdf,application/pdf"
+        aria-label="Chọn sách PDF">
+    </div>
   </div>
+
+  <p id="health">Đang khởi động Linh Reader...</p>
 
   <div id="libraryContent">
     <div id="libraryEmpty">
@@ -381,6 +405,7 @@ button:active { opacity:.65; }
       <h2>Chưa có sách</h2>
       <p>Nhấn ＋ Thêm sách để chọn PDF.</p>
     </div>
+
     <div id="bookList"></div>
   </div>
 </section>
@@ -407,14 +432,52 @@ button:active { opacity:.65; }
   </div>
 </section>
 
-<script src="lib/pdf.min.js"></script>
+<script>
+/* BẮT LỖI TRƯỚC KHI TẢI PDF.JS */
+
+window.addEventListener("error",function(event) {
+  var box = document.getElementById("statusBox");
+
+  if (box) {
+    box.style.display = "block";
+    box.textContent =
+      "Lỗi ứng dụng:\n"
+      + (event.message || "Không tải được tệp.");
+  }
+});
+
+window.addEventListener(
+  "unhandledrejection",
+  function(event) {
+    var box = document.getElementById("statusBox");
+
+    if (box) {
+      box.style.display = "block";
+      box.textContent =
+        "Lỗi xử lý:\n"
+        + String(event.reason || "Không rõ nguyên nhân");
+    }
+  }
+);
+</script>
+
+<script src="./lib/pdf.min.js"></script>
+
 <script>
 "use strict";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "lib/pdf.worker.min.js";
+/* KHÔNG LÀM DỪNG TOÀN APP
+   NẾU PDF.JS CHƯA TẢI ĐƯỢC */
 
-/* INDEXEDDB - GIỮ TƯƠNG THÍCH DỮ LIỆU CŨ */
+const pdfAvailable =
+  typeof window.pdfjsLib !== "undefined";
+
+if (pdfAvailable) {
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "./lib/pdf.worker.min.js";
+}
+
+/* DATABASE */
 
 const DB_NAME = "LinhReaderDB";
 const DB_VERSION = 2;
@@ -422,10 +485,69 @@ const BOOK_STORE = "books";
 const STATE_STORE = "bookState";
 
 let db = null;
+let pdfDocument = null;
+let currentBook = null;
+let currentState = null;
+let rendering = false;
+let openingBook = false;
+let importing = false;
+let controlsHidden = false;
+let touchStart = null;
+
+const el = id => document.getElementById(id);
+
+const canvas = el("pdfCanvas");
+const ctx = canvas.getContext("2d");
+const viewer = el("viewer");
+const readerView = el("readerView");
+const readerScreen = el("readerScreen");
+const libraryScreen = el("libraryScreen");
+const bookList = el("bookList");
+const modeBtn = el("modeBtn");
+const themeBtn = el("themeBtn");
+const pdfInput = el("pdfInput");
+
+let statusTimer = null;
+
+function showStatus(message,duration=0) {
+  clearTimeout(statusTimer);
+
+  el("statusBox").textContent = message;
+  el("statusBox").style.display = "block";
+
+  if (duration>0) {
+    statusTimer = setTimeout(hideStatus,duration);
+  }
+}
+
+function hideStatus() {
+  clearTimeout(statusTimer);
+  el("statusBox").style.display = "none";
+}
+
+function formatSize(bytes) {
+  if (bytes<1048576) {
+    return Math.round(bytes/1024)+" KB";
+  }
+
+  return (bytes/1048576).toFixed(1)+" MB";
+}
+
+function createId() {
+  return Date.now().toString(36)+"-"
+    +Math.random().toString(36).slice(2,10);
+}
+
+function escapeHTML(text) {
+  const div = document.createElement("div");
+  div.textContent = String(text==null?"":text);
+  return div.innerHTML;
+}
 
 function openDatabase() {
   return new Promise((resolve,reject) => {
-    const request = indexedDB.open(DB_NAME,DB_VERSION);
+    const request =
+      indexedDB.open(DB_NAME,DB_VERSION);
 
     request.onupgradeneeded = event => {
       const database = event.target.result;
@@ -444,7 +566,10 @@ function openDatabase() {
     };
 
     request.onblocked = () => {
-      showStatus("Đóng các tab Linh Reader khác.");
+      showStatus(
+        "Bộ nhớ đang bị khóa.\n"
+        +"Hãy đóng các cửa sổ Linh Reader khác."
+      );
     };
 
     request.onsuccess = () => {
@@ -461,6 +586,7 @@ function readRecord(storeName,id) {
   return new Promise((resolve,reject) => {
     const tx = db.transaction(storeName,"readonly");
     const request = tx.objectStore(storeName).get(id);
+
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
@@ -470,6 +596,7 @@ function readAll(storeName) {
   return new Promise((resolve,reject) => {
     const tx = db.transaction(storeName,"readonly");
     const request = tx.objectStore(storeName).getAll();
+
     request.onsuccess = () => resolve(request.result||[]);
     request.onerror = () => reject(request.error);
   });
@@ -478,14 +605,38 @@ function readAll(storeName) {
 function writeRecord(storeName,value,method="put") {
   return new Promise((resolve,reject) => {
     const tx = db.transaction(storeName,"readwrite");
+    let finished = false;
 
-    tx.oncomplete = () => resolve();
+    const timeout = setTimeout(() => {
+      if (!finished) {
+        finished = true;
+        reject(new Error(
+          "Lưu quá lâu. Bộ nhớ Safari có thể đang bị treo."
+        ));
+      }
+    },45000);
+
+    function finish(error) {
+      if (finished) return;
+
+      finished = true;
+      clearTimeout(timeout);
+
+      if (error) reject(error);
+      else resolve();
+    }
+
+    tx.oncomplete = () => finish();
     tx.onerror = () =>
-      reject(tx.error||new Error("Lỗi lưu dữ liệu"));
+      finish(tx.error||new Error("Lỗi lưu dữ liệu"));
     tx.onabort = () =>
-      reject(tx.error||new Error("Giao dịch bị hủy"));
+      finish(tx.error||new Error("Giao dịch bị hủy"));
 
-    tx.objectStore(storeName)[method](value);
+    try {
+      tx.objectStore(storeName)[method](value);
+    } catch (error) {
+      finish(error);
+    }
   });
 }
 
@@ -504,66 +655,37 @@ function deleteStoredBook(id) {
   });
 }
 
-/* TRẠNG THÁI ỨNG DỤNG */
+/* ĐỌC FILE THEO CÁCH TƯƠNG THÍCH iOS CŨ */
 
-let pdfDocument = null;
-let currentBook = null;
-let currentState = null;
-let rendering = false;
-let openingBook = false;
-let controlsHidden = false;
-let touchStart = null;
+function readFileBuffer(file) {
+  return new Promise((resolve,reject) => {
+    const reader = new FileReader();
 
-const el = id => document.getElementById(id);
+    reader.onload = () => {
+      if (reader.result instanceof ArrayBuffer) {
+        resolve(reader.result);
+      } else {
+        reject(new Error("Không nhận được dữ liệu PDF."));
+      }
+    };
 
-const canvas = el("pdfCanvas");
-const ctx = canvas.getContext("2d");
+    reader.onerror = () => {
+      reject(reader.error||new Error("Không đọc được file."));
+    };
 
-const viewer = el("viewer");
-const readerView = el("readerView");
-const readerScreen = el("readerScreen");
-const libraryScreen = el("libraryScreen");
-const bookList = el("bookList");
-const modeBtn = el("modeBtn");
-const themeBtn = el("themeBtn");
+    reader.onabort = () => {
+      reject(new Error("Đã hủy đọc file."));
+    };
 
-let statusTimer = null;
-
-function showStatus(message,duration=0) {
-  clearTimeout(statusTimer);
-  el("statusBox").textContent = message;
-  el("statusBox").style.display = "block";
-
-  if (duration>0) {
-    statusTimer = setTimeout(hideStatus,duration);
-  }
+    try {
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
 
-function hideStatus() {
-  clearTimeout(statusTimer);
-  el("statusBox").style.display = "none";
-}
-
-function formatSize(bytes) {
-  if (bytes<1024*1024) {
-    return Math.round(bytes/1024)+" KB";
-  }
-
-  return (bytes/(1024*1024)).toFixed(1)+" MB";
-}
-
-function createId() {
-  return Date.now().toString(36)+"-"
-    +Math.random().toString(36).slice(2,10);
-}
-
-function escapeHTML(text) {
-  const div = document.createElement("div");
-  div.textContent = String(text??"");
-  return div.innerHTML;
-}
-
-/* BỘ SỬA MÃ TIẾNG VIỆT */
+/* SỬA MÃ TIẾNG VIỆT */
 
 function cleanVietnameseText(text) {
   if (!text) return "";
@@ -597,23 +719,22 @@ function cleanVietnameseText(text) {
     .trim();
 }
 
-function detectSuspiciousCharacters(text) {
-  const cleaned = cleanVietnameseText(text);
-  const found = cleaned.match(/[\u0400-\u052F]/g);
-
-  if (found) {
-    for (const char of new Set(found)) {
-      console.warn(
-        "Ký tự chưa sửa:",
-        char,
-        "U+"+char.charCodeAt(0)
-          .toString(16).toUpperCase()
-      );
-    }
-  }
+function normalizeSpacing(text) {
+  return text
+    .replace(/\s+([,.;:!?%)\]»”])/g,"$1")
+    .replace(/([(\[«“])\s+/g,"$1")
+    .replace(/\s{2,}/g," ")
+    .trim();
 }
 
-/* NHẬN DIỆN ĐOẠN VĂN VÀ HỘI THOẠI */
+function mergeLines(a,b) {
+  if (/[A-Za-zÀ-ỹĐđ]-$/.test(a)
+      && /^[a-zà-ỹđ]/.test(b)) {
+    return normalizeSpacing(a.slice(0,-1)+b);
+  }
+
+  return normalizeSpacing(a+" "+b);
+}
 
 function median(numbers) {
   if (!numbers.length) return 0;
@@ -630,25 +751,7 @@ function percentile(numbers,p) {
   if (!numbers.length) return 0;
 
   const sorted = [...numbers].sort((a,b) => a-b);
-  const index = Math.floor((sorted.length-1)*p);
-  return sorted[index];
-}
-
-function normalizeSpacing(text) {
-  return text
-    .replace(/\s+([,.;:!?%)\]»”])/g,"$1")
-    .replace(/([(\[«“])\s+/g,"$1")
-    .replace(/\s{2,}/g," ")
-    .trim();
-}
-
-function mergeLines(a,b) {
-  if (/[A-Za-zÀ-ỹĐđ]-$/.test(a)
-      && /^[a-zà-ỹđ]/.test(b)) {
-    return normalizeSpacing(a.slice(0,-1)+b);
-  }
-
-  return normalizeSpacing(a+" "+b);
+  return sorted[Math.floor((sorted.length-1)*p)];
 }
 
 function startsDialogue(text) {
@@ -671,9 +774,7 @@ function isHeading(line) {
     ch.toLowerCase()!==ch.toUpperCase()
   );
 
-  if (letters.length<4 || text.length>110) {
-    return false;
-  }
+  if (letters.length<4||text.length>110) return false;
 
   const uppercase = letters.filter(ch =>
     ch===ch.toUpperCase()
@@ -690,20 +791,14 @@ function endsSentence(text) {
 function buildParagraphs(lines) {
   if (!lines.length) return [];
 
-  const left = percentile(
-    lines.map(line => line.x),.25
-  );
-
-  const right = percentile(
-    lines.map(line => line.right),.78
-  );
-
+  const left = percentile(lines.map(l => l.x),.25);
+  const right = percentile(lines.map(l => l.right),.78);
   const columnWidth = Math.max(100,right-left);
   const gaps = [];
 
   for (let i=1;i<lines.length;i++) {
     const gap = lines[i-1].y-lines[i].y;
-    if (gap>2 && gap<70) gaps.push(gap);
+    if (gap>2&&gap<70) gaps.push(gap);
   }
 
   const normalGap = median(gaps)||14;
@@ -717,8 +812,11 @@ function buildParagraphs(lines) {
 
     const type = heading
       ? "heading"
-      : dialogue ? "dialogue"
-      : bullet ? "bullet" : "paragraph";
+      : dialogue
+        ? "dialogue"
+        : bullet
+          ? "bullet"
+          : "paragraph";
 
     if (!current) {
       current = {text:line.text,type,last:line};
@@ -726,10 +824,9 @@ function buildParagraphs(lines) {
     }
 
     const previous = current.last;
-    const verticalGap = previous.y-line.y;
 
     const largeGap =
-      verticalGap>normalGap*1.35;
+      previous.y-line.y>normalGap*1.35;
 
     const newIndent =
       line.x-left>Math.max(12,normalGap*.85)
@@ -743,10 +840,9 @@ function buildParagraphs(lines) {
       previousShort&&endsSentence(previous.text);
 
     const newParagraph =
-      dialogue || bullet || heading
-      || current.type==="heading"
-      || largeGap || newIndent
-      || finishedParagraph;
+      dialogue||bullet||heading
+      ||current.type==="heading"
+      ||largeGap||newIndent||finishedParagraph;
 
     if (newParagraph) {
       result.push(current);
@@ -763,7 +859,7 @@ function buildParagraphs(lines) {
   return result;
 }
 
-/* TỦ SÁCH */
+/* HIỂN THỊ TỦ SÁCH */
 
 async function renderLibrary() {
   const [books,states] = await Promise.all([
@@ -775,10 +871,15 @@ async function renderLibrary() {
     states.map(state => [state.id,state])
   );
 
-  books.sort((a,b) =>
-    (b.lastOpenedAt||b.addedAt||0)
-    -(a.lastOpenedAt||a.addedAt||0)
-  );
+  books.sort((a,b) => {
+    const aTime = stateMap.get(a.id)?.lastOpenedAt
+      || a.addedAt || 0;
+
+    const bTime = stateMap.get(b.id)?.lastOpenedAt
+      || b.addedAt || 0;
+
+    return bTime-aTime;
+  });
 
   bookList.innerHTML = "";
 
@@ -789,9 +890,7 @@ async function renderLibrary() {
   for (const book of books) {
     const state = stateMap.get(book.id)||book;
     const page = state.currentPage||1;
-    const total =
-      state.totalPages||book.totalPages||0;
-
+    const total = state.totalPages||book.totalPages||0;
     const progress = total
       ? Math.min(100,Math.round(page/total*100))
       : 0;
@@ -829,15 +928,13 @@ async function renderLibrary() {
 
     card.querySelector(".deleteBookBtn").onclick =
       async () => {
-        if (!confirm("Xóa sách?\n\n"+book.name)) {
-          return;
-        }
+        if (!confirm("Xóa sách?\n\n"+book.name)) return;
 
         try {
           await deleteStoredBook(book.id);
           await renderLibrary();
         } catch (error) {
-          alert("Không xóa được sách: "+error.message);
+          showStatus("Không xóa được: "+error.message,6000);
         }
       };
 
@@ -845,73 +942,107 @@ async function renderLibrary() {
   }
 }
 
-/* IMPORT PDF NHẸ */
+/* THÊM PDF - CÓ THÔNG BÁO TỪNG BƯỚC */
 
-el("pdfInput").addEventListener("change",async event => {
-  const files = Array.from(event.target.files||[]);
-  if (!files.length) return;
+pdfInput.addEventListener("click",() => {
+  if (!importing) {
+    showStatus(
+      "Đã nhận thao tác Thêm sách.\n"
+      +"Đang chờ iPhone chọn PDF...",
+      5000
+    );
+  }
+});
 
-  el("pdfInput").disabled = true;
-  let success = 0;
+async function handleSelectedFile() {
+  if (importing) return;
 
-  for (const file of files) {
+  const file = pdfInput.files&&pdfInput.files[0];
+
+  if (!file) {
+    showStatus(
+      "Chưa nhận được file PDF từ iPhone.",
+      5000
+    );
+    return;
+  }
+
+  importing = true;
+  pdfInput.disabled = true;
+
+  try {
     if (!file.name.toLowerCase().endsWith(".pdf")
         && file.type!=="application/pdf") {
-      alert("Chỉ hỗ trợ PDF: "+file.name);
-      continue;
+      throw new Error("File được chọn không phải PDF.");
     }
 
     showStatus(
-      "Đang lưu "+file.name
-      +"\n"+formatSize(file.size)
+      "Đã chọn: "+file.name+"\n"
+      +"Đang đọc file "+formatSize(file.size)+"..."
     );
 
-    try {
-      const book = {
-        id:createId(),
-        name:file.name,
-        size:file.size,
-        type:"application/pdf",
-        blob:file,
-        totalPages:0,
-        currentPage:1,
-        readerMode:false,
-        readerFontSize:21,
-        scale:1.2,
-        theme:0,
-        addedAt:Date.now(),
-        lastOpenedAt:Date.now()
-      };
+    const bytes = await readFileBuffer(file);
 
-      await writeRecord(BOOK_STORE,book,"add");
-      success++;
+    showStatus(
+      "Đã đọc PDF thành công.\n"
+      +"Đang lưu vào Tủ sách..."
+    );
 
-    } catch (error) {
-      console.error("Lỗi lưu PDF:",error);
+    const book = {
+      id:createId(),
+      name:file.name,
+      size:file.size,
+      type:"application/pdf",
 
-      const message = error.name==="QuotaExceededError"
-        ? "Không đủ bộ nhớ Safari."
-        : error.name+": "+error.message;
+      /* Lưu ArrayBuffer để tăng tính
+         tương thích với Safari cũ. */
+      bytes:bytes,
 
-      alert(
-        "Không thể lưu:\n"+file.name
-        +"\n\n"+message
-      );
-    }
+      totalPages:0,
+      currentPage:1,
+      readerMode:false,
+      readerFontSize:21,
+      scale:1.2,
+      theme:0,
+      addedAt:Date.now(),
+      lastOpenedAt:Date.now()
+    };
+
+    await writeRecord(BOOK_STORE,book,"add");
+
+    showStatus(
+      "Đã lưu sách!\n"+file.name,
+      3500
+    );
+
+    await renderLibrary();
+
+  } catch (error) {
+    console.error("Lỗi thêm sách:",error);
+
+    const message = error.name==="QuotaExceededError"
+      ? "Bộ nhớ Safari không đủ."
+      : (error.message||String(error));
+
+    showStatus(
+      "Không lưu được PDF:\n"+message,
+      10000
+    );
+
+  } finally {
+    pdfInput.value = "";
+    pdfInput.disabled = false;
+    importing = false;
   }
+}
 
-  el("pdfInput").value = "";
-  el("pdfInput").disabled = false;
+/* iOS có thể phát input hoặc change.
+   Cờ importing ngăn lưu trùng. */
 
-  await renderLibrary();
+pdfInput.addEventListener("change",handleSelectedFile);
+pdfInput.addEventListener("input",handleSelectedFile);
 
-  showStatus(
-    "Đã lưu "+success+"/"+files.length+" sách.",
-    2500
-  );
-});
-
-/* LƯU TRẠNG THÁI RIÊNG, KHÔNG GHI LẠI PDF */
+/* CHỈ LƯU TRẠNG THÁI, KHÔNG GHI LẠI FILE */
 
 function makeCurrentState() {
   return {
@@ -936,11 +1067,31 @@ async function saveCurrentState() {
     );
   } catch (error) {
     console.error("Lỗi lưu tiến độ:",error);
-    showStatus("Chưa lưu được tiến độ.",2500);
+    showStatus(
+      "Không lưu được tiến độ: "+error.message,
+      6000
+    );
   }
 }
 
-/* MỞ SÁCH */
+/* MỞ SÁCH CŨ VÀ MỚI */
+
+async function getBookBytes(book) {
+  if (book.bytes instanceof ArrayBuffer) {
+    return new Uint8Array(book.bytes);
+  }
+
+  if (book.bytes instanceof Uint8Array) {
+    return book.bytes;
+  }
+
+  if (book.blob) {
+    const buffer = await readFileBuffer(book.blob);
+    return new Uint8Array(buffer);
+  }
+
+  throw new Error("Sách không có dữ liệu PDF.");
+}
 
 async function openStoredBook(id) {
   if (pdfDocument||rendering||openingBook) return;
@@ -952,11 +1103,19 @@ async function openStoredBook(id) {
     const book = await readRecord(BOOK_STORE,id);
     const saved = await readRecord(STATE_STORE,id);
 
-    if (!book||!book.blob) {
-      throw new Error("Không tìm thấy dữ liệu PDF.");
+    if (!book) {
+      throw new Error("Không tìm thấy sách.");
+    }
+
+    if (!pdfAvailable) {
+      throw new Error(
+        "Thiếu thư viện lib/pdf.min.js.\n"
+        +"Kiểm tra thư mục lib trên GitHub."
+      );
     }
 
     currentBook = book;
+
     currentState = {
       id,
       currentPage:saved?.currentPage
@@ -973,10 +1132,10 @@ async function openStoredBook(id) {
         ??book.theme??0
     };
 
-    const buffer = await book.blob.arrayBuffer();
+    const bytes = await getBookBytes(book);
 
-    pdfDocument = await pdfjsLib.getDocument({
-      data:buffer
+    pdfDocument = await window.pdfjsLib.getDocument({
+      data:bytes
     }).promise;
 
     currentState.totalPages = pdfDocument.numPages;
@@ -995,19 +1154,25 @@ async function openStoredBook(id) {
     controlsHidden = false;
 
     el("readerBookTitle").textContent = book.name;
+
     modeBtn.textContent =
       currentState.readerMode?"PDF":"Reader";
 
     applyTheme();
+
     await renderCurrentPage();
     await saveCurrentState();
+
     hideStatus();
 
   } catch (error) {
-    console.error("Lỗi mở PDF:",error);
-    hideStatus();
+    console.error("Lỗi mở sách:",error);
 
-    alert("Không thể mở PDF.\n\n"+error.message);
+    showStatus(
+      "Không mở được sách:\n"
+      +error.message,
+      10000
+    );
 
     if (pdfDocument) {
       try { await pdfDocument.destroy(); }
@@ -1026,7 +1191,7 @@ async function openStoredBook(id) {
   }
 }
 
-/* RENDER TRANG */
+/* HIỂN THỊ TRANG */
 
 async function renderCurrentPage(resetScroll=true) {
   if (!pdfDocument||rendering) return;
@@ -1047,8 +1212,12 @@ async function renderCurrentPage(resetScroll=true) {
       +" / "+pdfDocument.numPages;
 
   } catch (error) {
-    console.error("Lỗi trang:",error);
-    showStatus("Không thể hiển thị trang.",2200);
+    console.error("Lỗi hiển thị:",error);
+    showStatus(
+      "Không hiển thị được trang:\n"
+      +error.message,
+      7000
+    );
 
   } finally {
     rendering = false;
@@ -1071,9 +1240,9 @@ async function renderPDF() {
   const area = viewport.width*viewport.height;
 
   if (area>maxPixels) {
-    const factor = Math.sqrt(maxPixels/area);
     viewport = page.getViewport({
-      scale:currentState.scale*factor
+      scale:currentState.scale
+        *Math.sqrt(maxPixels/area)
     });
   }
 
@@ -1085,8 +1254,6 @@ async function renderPDF() {
     viewport
   }).promise;
 }
-
-/* READER MODE */
 
 async function renderReader() {
   canvas.style.display = "none";
@@ -1102,8 +1269,6 @@ async function renderReader() {
 
   for (const item of textContent.items) {
     if (!item.str||!item.str.trim()) continue;
-
-    detectSuspiciousCharacters(item.str);
 
     const text = cleanVietnameseText(item.str);
     if (!text) continue;
@@ -1133,7 +1298,6 @@ async function renderReader() {
     line.items.sort((a,b) => a.x-b.x);
 
     const x = line.items[0].x;
-
     const right = Math.max(
       ...line.items.map(item => item.x+item.width)
     );
@@ -1149,20 +1313,19 @@ async function renderReader() {
 
   readerView.innerHTML = paragraphs.length
     ? paragraphs.map(paragraph => {
-        const className =
-          paragraph.type==="heading"
-            ? "readerHeading"
-            : paragraph.type==="dialogue"
-              ? "readerDialogue"
-              : paragraph.type==="bullet"
-                ? "readerBullet"
-                : "readerParagraph";
+        const cls = paragraph.type==="heading"
+          ? "readerHeading"
+          : paragraph.type==="dialogue"
+            ? "readerDialogue"
+            : paragraph.type==="bullet"
+              ? "readerBullet"
+              : "readerParagraph";
 
-        return `<div class="${className}">`
+        return '<div class="'+cls+'">'
           +escapeHTML(paragraph.text)
-          +"</div>";
+          +'</div>';
       }).join("")
-    : "<p>Không tìm thấy chữ. PDF có thể là bản scan.</p>";
+    : "<p>PDF này không có chữ trích xuất được.</p>";
 
   readerView.style.fontSize =
     currentState.readerFontSize+"px";
@@ -1174,10 +1337,10 @@ async function changePage(direction) {
   if (!pdfDocument||rendering) return;
 
   const next = currentState.currentPage+direction;
-
   if (next<1||next>pdfDocument.numPages) return;
 
   currentState.currentPage = next;
+
   await renderCurrentPage();
   await saveCurrentState();
 }
@@ -1185,7 +1348,7 @@ async function changePage(direction) {
 el("prevBtn").onclick = () => changePage(-1);
 el("nextBtn").onclick = () => changePage(1);
 
-/* TĂNG GIẢM CỠ CHỮ / ZOOM */
+/* CỠ CHỮ / ZOOM */
 
 async function changeSize(direction) {
   if (!pdfDocument||rendering) return;
@@ -1193,8 +1356,10 @@ async function changeSize(direction) {
   if (currentState.readerMode) {
     currentState.readerFontSize = Math.max(
       14,
-      Math.min(40,
-        currentState.readerFontSize+direction*2)
+      Math.min(
+        40,
+        currentState.readerFontSize+direction*2
+      )
     );
 
     readerView.style.fontSize =
@@ -1203,8 +1368,10 @@ async function changeSize(direction) {
   } else {
     currentState.scale = Math.max(
       .5,
-      Math.min(3,
-        currentState.scale+direction*.15)
+      Math.min(
+        3,
+        currentState.scale+direction*.15
+      )
     );
 
     await renderCurrentPage(false);
@@ -1216,7 +1383,7 @@ async function changeSize(direction) {
 el("zoomOut").onclick = () => changeSize(-1);
 el("zoomIn").onclick = () => changeSize(1);
 
-/* CHUYỂN READER / PDF */
+/* READER / PDF */
 
 modeBtn.onclick = async () => {
   if (!pdfDocument||rendering) return;
@@ -1230,7 +1397,7 @@ modeBtn.onclick = async () => {
   await saveCurrentState();
 };
 
-/* CHẾ ĐỘ MÀU */
+/* THEME */
 
 function applyTheme() {
   readerScreen.classList.remove("night","sepia");
@@ -1249,24 +1416,24 @@ function applyTheme() {
 themeBtn.onclick = async () => {
   if (!currentState) return;
 
-  currentState.theme =
-    (currentState.theme+1)%3;
+  currentState.theme = (currentState.theme+1)%3;
 
   applyTheme();
   await saveCurrentState();
 };
 
-/* ẨN THANH CÔNG CỤ */
+/* ẨN / HIỆN THANH */
 
 function toggleControls() {
   controlsHidden = !controlsHidden;
 
   readerScreen.classList.toggle(
-    "controls-hidden",controlsHidden
+    "controls-hidden",
+    controlsHidden
   );
 }
 
-/* VUỐT CHUYỂN TRANG IPHONE */
+/* VUỐT CHUYỂN TRANG */
 
 viewer.addEventListener("touchstart",event => {
   if (event.touches.length!==1) {
@@ -1301,6 +1468,7 @@ viewer.addEventListener("touchend",event => {
 
   const dx = touch.clientX-touchStart.x;
   const dy = touch.clientY-touchStart.y;
+
   const ax = Math.abs(dx);
   const ay = Math.abs(dy);
   const duration = Date.now()-touchStart.time;
@@ -1340,11 +1508,8 @@ async function closeCurrentBook() {
   await saveCurrentState();
 
   if (pdfDocument) {
-    try {
-      await pdfDocument.destroy();
-    } catch (error) {
-      console.warn(error);
-    }
+    try { await pdfDocument.destroy(); }
+    catch (error) { console.warn(error); }
   }
 
   pdfDocument = null;
@@ -1381,12 +1546,29 @@ async function startApp() {
   try {
     await openDatabase();
     await renderLibrary();
-  } catch (error) {
-    console.error("IndexedDB:",error);
 
-    alert(
-      "Không mở được bộ nhớ Linh Reader.\n"
-      +error.message
+    el("health").textContent = pdfAvailable
+      ? "Linh Reader v12 · Bộ nhớ OK · PDF.js OK"
+      : "Linh Reader v12 · Bộ nhớ OK · THIẾU PDF.JS";
+
+    if (!pdfAvailable) {
+      showStatus(
+        "Thiếu thư viện PDF.js.\n"
+        +"Hãy kiểm tra thư mục lib trên GitHub.",
+        9000
+      );
+    }
+
+  } catch (error) {
+    console.error("Lỗi khởi động:",error);
+
+    el("health").textContent =
+      "Linh Reader v12 · LỖI BỘ NHỚ";
+
+    showStatus(
+      "Không mở được IndexedDB:\n"
+      +error.message,
+      12000
     );
   }
 }
@@ -1403,5 +1585,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+
 </body>
 </html>

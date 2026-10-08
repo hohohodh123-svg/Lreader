@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "linh-reader-v11";
+const CACHE_NAME = "linh-reader-v12";
 
 const APP_FILES = [
   "./",
@@ -19,16 +19,16 @@ self.addEventListener("install",event => {
 
 self.addEventListener("activate",event => {
   event.waitUntil(
-    caches.keys()
-      .then(names => Promise.all(
+    caches.keys().then(names =>
+      Promise.all(
         names
           .filter(name =>
             name.startsWith("linh-reader-")
             && name!==CACHE_NAME
           )
           .map(name => caches.delete(name))
-      ))
-      .then(() => self.clients.claim())
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
