@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Linh Reader</title>
 <link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
 <meta name="theme-color" content="#f6f0e4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -44,6 +46,14 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 #readerScreen{position:fixed;inset:0;overflow:hidden;z-index:50;background:#eee8dc}
 .readerHeader{position:absolute;top:0;left:0;right:0;height:55px;display:flex;align-items:center;gap:8px;padding:0 8px;background:#f6f0e4;border-bottom:1px solid #ccc;z-index:20;transition:transform .22s,opacity .22s}
 #readerBookTitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:600}
+/* v15: nút ảnh độc lập, chỉ dùng trong Reader Mode. */
+#imagesToggle{flex-shrink:0;min-width:40px;min-height:38px;padding:4px 6px;font-size:18px;border:1px solid #cfc3b2;background:transparent}
+#imagesToggle.isOn{background:#eadfc5;border-color:#c7a76d}
+.night #imagesToggle{border-color:#666}
+.readerFigure{margin:1.15em auto 1.45em;text-align:center;max-width:100%;break-inside:avoid}
+.readerFigure img{display:block;margin:auto;max-width:100%;height:auto;border-radius:6px;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.16)}
+.readerFigure figcaption{font-size:.58em;line-height:1.45;opacity:.72;margin:.4em 0 0;text-align:center}
+
 #viewer{position:absolute;top:55px;bottom:62px;left:0;right:0;padding:10px;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom;display:flex;align-items:flex-start;justify-content:center;transition:top .22s,bottom .22s}
 #pdfCanvas{display:none;max-width:100%;height:auto;background:white;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 #readerView{display:none;width:100%;max-width:680px;padding:12px 12px 55px;font-size:21px;line-height:1.72;overflow-wrap:break-word;word-break:normal}
@@ -125,6 +135,7 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
   <div class="readerHeader">
     <button id="backBtn" aria-label="Về tủ sách">‹</button>
     <div id="readerBookTitle"></div>
+    <button id="imagesToggle" class="hidden" type="button" aria-label="Bật hoặc tắt ảnh trong Reader" title="Giữ ảnh minh họa trong Reader">🖼️</button>
     <button id="bookmarkToggle" class="bookmarkTool" type="button" aria-label="Đánh dấu trang hiện tại" aria-pressed="false" title="Đánh dấu trang">☆</button>
     <button id="openBookmarks" class="bookmarkTool" type="button" aria-label="Danh sách dấu trang" title="Danh sách dấu trang">📑</button>
   </div>
@@ -211,6 +222,7 @@ const readerScreen=el("readerScreen");
 const libraryScreen=el("libraryScreen");
 const bookList=el("bookList");
 const modeBtn=el("modeBtn");
+const imagesToggle=el("imagesToggle");
 const themeBtn=el("themeBtn");
 const pdfInput=el("pdfInput");
 const bookSearch=el("bookSearch");
@@ -475,14 +487,14 @@ function buildParagraphs(lines){
   for(const line of lines){
     const dialogue=startsDialogue(line.text),bullet=isBullet(line.text),heading=isHeading(line);
     const type=heading?"heading":dialogue?"dialogue":bullet?"bullet":"paragraph";
-    if(!current){current={text:line.text,type,last:line};continue;}
+    if(!current){current={text:line.text,type,last:line,firstY:line.y};continue;}
     const previous=current.last;
     const largeGap=previous.y-line.y>normalGap*1.35;
     const newIndent=line.x-left>Math.max(12,normalGap*.85)&&Math.abs(previous.x-left)<16;
     const previousShort=previous.right<right-Math.max(18,columnWidth*.12);
     const finishedParagraph=previousShort&&endsSentence(previous.text);
     const newParagraph=dialogue||bullet||heading||current.type==="heading"||largeGap||newIndent||finishedParagraph;
-    if(newParagraph){result.push(current);current={text:line.text,type,last:line};}
+    if(newParagraph){result.push(current);current={text:line.text,type,last:line,firstY:line.y};}
     else{current.text=mergeLines(current.text,line.text);current.last=line;}
   }
   if(current)result.push(current);
@@ -495,7 +507,7 @@ function normalizeBookmarks(values,maxPage=Infinity){
   return [...new Set(values.map(Number).filter(page=>Number.isInteger(page)&&page>=1&&page<=maxPage))].sort((a,b)=>a-b);
 }
 function makeCurrentState(){
-  return {id:currentBook.id,displayName:currentState.displayName||null,currentPage:currentState.currentPage,totalPages:currentState.totalPages,readerMode:currentState.readerMode,readerFontSize:currentState.readerFontSize,scale:currentState.scale,theme:currentState.theme,bookmarks:normalizeBookmarks(currentState.bookmarks),lastOpenedAt:Date.now()};
+  return {id:currentBook.id,displayName:currentState.displayName||null,currentPage:currentState.currentPage,totalPages:currentState.totalPages,readerMode:currentState.readerMode,showReaderImages:currentState.showReaderImages!==false,readerFontSize:currentState.readerFontSize,scale:currentState.scale,theme:currentState.theme,bookmarks:normalizeBookmarks(currentState.bookmarks),lastOpenedAt:Date.now()};
 }
 async function saveCurrentState(){
   if(!currentBook||!currentState)return;
@@ -511,7 +523,7 @@ async function openStoredBook(id){
     if(!book)throw new Error("Không tìm thấy sách.");
     if(!pdfAvailable)throw new Error("Thiếu thư viện lib/pdf.min.js.");
     currentBook=book;
-    currentState={id,displayName:saved?.displayName||null,currentPage:saved?.currentPage||book.currentPage||1,totalPages:saved?.totalPages||book.totalPages||0,readerMode:saved?.readerMode??book.readerMode??false,readerFontSize:saved?.readerFontSize||book.readerFontSize||21,scale:saved?.scale||book.scale||1.2,theme:saved?.theme??book.theme??0,bookmarks:normalizeBookmarks(saved?.bookmarks||book.bookmarks)};
+    currentState={id,displayName:saved?.displayName||null,currentPage:saved?.currentPage||book.currentPage||1,totalPages:saved?.totalPages||book.totalPages||0,readerMode:saved?.readerMode??book.readerMode??false,showReaderImages:saved?.showReaderImages??true,readerFontSize:saved?.readerFontSize||book.readerFontSize||21,scale:saved?.scale||book.scale||1.2,theme:saved?.theme??book.theme??0,bookmarks:normalizeBookmarks(saved?.bookmarks||book.bookmarks)};
     pdfDocument=await window.pdfjsLib.getDocument({data:await getBookBytes(book)}).promise;
     currentState.totalPages=pdfDocument.numPages;
     currentState.currentPage=Math.max(1,Math.min(currentState.currentPage,pdfDocument.numPages));
@@ -519,6 +531,7 @@ async function openStoredBook(id){
     libraryScreen.classList.add("hidden");readerScreen.classList.remove("hidden","controls-hidden");controlsHidden=false;
     el("readerBookTitle").textContent=currentState.displayName||book.name;
     modeBtn.textContent=currentState.readerMode?"PDF":"Reader";
+    updateReaderImagesButton();
     applyTheme();
     updateBookmarkButton();
     await renderCurrentPage();
@@ -551,6 +564,135 @@ async function renderPDF(){
   canvas.width=Math.round(viewport.width);canvas.height=Math.round(viewport.height);
   await page.render({canvasContext:ctx,viewport}).promise;
 }
+/*
+ * v15 – Ảnh trong Reader Mode.
+ * Dùng OperatorList của PDF.js 2.16 để định vị các ảnh bitmap trên
+ * trang PDF, rồi cắt vùng tương ứng từ ảnh render của trang gốc.
+ * Tránh sao chép PDF vào IndexedDB và giới hạn bộ nhớ cho iPhone 6s.
+ * Không cam kết tái tạo hoàn hảo hình vector hoặc bố cục phức tạp.
+ */
+function pdfMatrixMultiply(a,b){
+  return [
+    a[0]*b[0]+a[2]*b[1],a[1]*b[0]+a[3]*b[1],
+    a[0]*b[2]+a[2]*b[3],a[1]*b[2]+a[3]*b[3],
+    a[0]*b[4]+a[2]*b[5]+a[4],a[1]*b[4]+a[3]*b[5]+a[5]
+  ];
+}
+function pdfTransformPoint(matrix,x,y){
+  return [matrix[0]*x+matrix[2]*y+matrix[4],matrix[1]*x+matrix[3]*y+matrix[5]];
+}
+function rectIntersectionArea(a,b){
+  const w=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left));
+  const h=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+  return w*h;
+}
+async function findPageImageRects(page,viewport,hasText){
+  const ops=window.pdfjsLib.OPS;
+  const list=await page.getOperatorList();
+  const imageOps=new Set([
+    ops.paintImageXObject,ops.paintJpegXObject,ops.paintInlineImageXObject
+  ].filter(x=>typeof x==="number"));
+  let ctm=[1,0,0,1,0,0];
+  const stack=[];
+  const found=[];
+  for(let i=0;i<list.fnArray.length;i++){
+    const fn=list.fnArray[i],args=list.argsArray[i];
+    if(fn===ops.save){stack.push(ctm.slice());continue;}
+    if(fn===ops.restore){if(stack.length)ctm=stack.pop();continue;}
+    if(fn===ops.paintFormXObjectBegin){
+      stack.push(ctm.slice());
+      if(args&&args[0]&&args[0].length===6)ctm=pdfMatrixMultiply(ctm,args[0]);
+      continue;
+    }
+    if(fn===ops.paintFormXObjectEnd){if(stack.length)ctm=stack.pop();continue;}
+    if(fn===ops.transform){
+      if(args&&args.length===6)ctm=pdfMatrixMultiply(ctm,args);
+      continue;
+    }
+    if(!imageOps.has(fn))continue;
+
+    // Hình bitmap được vẽ vào hình vuông chuẩn (0,-1) tới (1,0).
+    const quad=[[0,0],[1,0],[0,-1],[1,-1]].map(([x,y])=>pdfTransformPoint(ctm,x,y));
+    const pdfX=quad.map(p=>p[0]),pdfY=quad.map(p=>p[1]);
+    const device=quad.map(p=>pdfTransformPoint(viewport.transform,p[0],p[1]));
+    let left=Math.max(0,Math.min(...device.map(p=>p[0])));
+    let top=Math.max(0,Math.min(...device.map(p=>p[1])));
+    let right=Math.min(viewport.width,Math.max(...device.map(p=>p[0])));
+    let bottom=Math.min(viewport.height,Math.max(...device.map(p=>p[1])));
+    const width=right-left,height=bottom-top;
+    if(width<35||height<28||width*height<2900)continue;
+    const fraction=(width*height)/(viewport.width*viewport.height);
+    // Trang scan OCR nguyên tờ: không lặp lại toàn bộ chữ đã có.
+    if(hasText&&fraction>.78)continue;
+    // Loại bỏ hai phần tử cùng một hình.
+    const rect={left,top,right,bottom,area:width*height,
+      pageY:(Math.max(...pdfY)+Math.min(...pdfY))/2};
+    const duplicate=found.some(other=>{
+      const overlap=rectIntersectionArea(rect,other);
+      return overlap/Math.min(rect.area,other.area)>.84;
+    });
+    if(!duplicate)found.push(rect);
+  }
+  // Tối đa 6 hình lớn, để giảm sử dụng RAM trên iPhone 6s.
+  return found.sort((a,b)=>b.area-a.area).slice(0,6).sort((a,b)=>b.pageY-a.pageY);
+}
+async function getReaderFigures(page,hasText){
+  let sourceCanvas=null;
+  try{
+    const base=page.getViewport({scale:1});
+    // Giới hạn 1.9 megapixel cho ảnh tạm; bỏ ngay sau khi cắt.
+    const scale=Math.min(1.45,Math.sqrt(1900000/(base.width*base.height)));
+    const viewport=page.getViewport({scale});
+    const rectangles=await findPageImageRects(page,viewport,hasText);
+    if(!rectangles.length)return [];
+    sourceCanvas=document.createElement("canvas");
+    sourceCanvas.width=Math.max(1,Math.floor(viewport.width));
+    sourceCanvas.height=Math.max(1,Math.floor(viewport.height));
+    const sourceCtx=sourceCanvas.getContext("2d",{alpha:false});
+    sourceCtx.fillStyle="#ffffff";
+    sourceCtx.fillRect(0,0,sourceCanvas.width,sourceCanvas.height);
+    await page.render({canvasContext:sourceCtx,viewport}).promise;
+    const figures=[];
+    for(const rect of rectangles){
+      const x=Math.max(0,Math.floor(rect.left-2));
+      const y=Math.max(0,Math.floor(rect.top-2));
+      const w=Math.min(sourceCanvas.width-x,Math.ceil(rect.right+2)-x);
+      const h=Math.min(sourceCanvas.height-y,Math.ceil(rect.bottom+2)-y);
+      if(w<=0||h<=0)continue;
+      const shrink=Math.min(1,900/w,900/h);
+      const pic=document.createElement("canvas");
+      pic.width=Math.max(1,Math.round(w*shrink));
+      pic.height=Math.max(1,Math.round(h*shrink));
+      pic.getContext("2d").drawImage(sourceCanvas,x,y,w,h,0,0,pic.width,pic.height);
+      figures.push({y:rect.pageY,src:pic.toDataURL("image/jpeg",.82)});
+      pic.width=0;pic.height=0;
+    }
+    return figures;
+  }catch(error){
+    console.warn("Không thể lấy hình minh họa trang này:",error);
+    return [];
+  }finally{
+    if(sourceCanvas){sourceCanvas.width=0;sourceCanvas.height=0;}
+  }
+}
+function updateReaderImagesButton(){
+  if(!currentState)return;
+  imagesToggle.classList.toggle("hidden",!currentState.readerMode);
+  const on=currentState.showReaderImages!==false;
+  imagesToggle.classList.toggle("isOn",on);
+  imagesToggle.textContent=on?"🖼️":"▧";
+  imagesToggle.setAttribute("aria-pressed",on?"true":"false");
+  imagesToggle.setAttribute("aria-label",on?"Tắt ảnh trong Reader":"Bật ảnh trong Reader");
+  imagesToggle.title=on?"Đang giữ ảnh – chạm để tắt":"Ảnh đang tắt – chạm để bật";
+}
+imagesToggle.onclick=async()=>{
+  if(!pdfDocument||rendering||!currentState.readerMode)return;
+  currentState.showReaderImages=currentState.showReaderImages===false;
+  updateReaderImagesButton();
+  await renderCurrentPage(false);
+  await saveCurrentState();
+};
+
 async function renderReader(){
   canvas.style.display="none";readerView.style.display="block";readerView.textContent="Đang xử lý chữ...";
   const page=await pdfDocument.getPage(currentState.currentPage);
@@ -572,11 +714,23 @@ async function renderReader(){
     return {x,right,y:line.y,text:normalizeSpacing(line.items.map(item=>item.text).join(" "))};
   }).filter(line=>line.text);
   const paragraphs=buildParagraphs(lines);
-  readerView.innerHTML=paragraphs.length?paragraphs.map(paragraph=>{
+  // Hiện chữ trước, không để Reader trống khi trang có ảnh phức tạp.
+  const paragraphHtml=paragraphs.map(paragraph=>{
     const cls=paragraph.type==="heading"?"readerHeading":paragraph.type==="dialogue"?"readerDialogue":paragraph.type==="bullet"?"readerBullet":"readerParagraph";
-    return '<div class="'+cls+'">'+escapeHTML(paragraph.text)+"</div>";
-  }).join(""):"<p>PDF này không có chữ trích xuất được.</p>";
+    return {y:paragraph.firstY??paragraph.last.y,html:'<div class="'+cls+'">'+escapeHTML(paragraph.text)+"</div>"};
+  });
+  readerView.innerHTML=paragraphHtml.length?paragraphHtml.map(p=>p.html).join(""):
+    "<p>PDF này không có chữ trích xuất được.</p>";
   readerView.style.fontSize=currentState.readerFontSize+"px";
+  if(currentState.showReaderImages===false)return;
+  const figures=await getReaderFigures(page,paragraphs.length>8);
+  if(!figures.length)return;
+  const blocks=paragraphHtml.map(item=>({y:item.y,html:item.html}));
+  figures.forEach((fig,i)=>{
+    blocks.push({y:fig.y,html:'<figure class="readerFigure"><img loading="eager" alt="Hình minh họa trong PDF, trang '+currentState.currentPage+'" src="'+fig.src+'"><figcaption>Hình minh họa · Trang '+currentState.currentPage+'</figcaption></figure>'});
+  });
+  blocks.sort((a,b)=>b.y-a.y);
+  readerView.innerHTML=blocks.map(item=>item.html).join("");
 }
 async function goToPage(pageNumber){
   if(!pdfDocument||rendering)return;
@@ -718,6 +872,7 @@ modeBtn.onclick=async()=>{
   if(!pdfDocument||rendering)return;
   currentState.readerMode=!currentState.readerMode;
   modeBtn.textContent=currentState.readerMode?"PDF":"Reader";
+  updateReaderImagesButton();
   await renderCurrentPage();await saveCurrentState();
 };
 function applyTheme(){
@@ -756,6 +911,7 @@ async function closeCurrentBook(){
   pdfDocument=null;currentBook=null;currentState=null;
   canvas.width=0;canvas.height=0;readerView.innerHTML="";readerView.style.display="none";canvas.style.display="none";
   readerScreen.classList.add("hidden");readerScreen.classList.remove("controls-hidden");
+  imagesToggle.classList.add("hidden");
   libraryScreen.classList.remove("hidden");controlsHidden=false;
   await renderLibrary();
 }
@@ -764,11 +920,11 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden&&currentBoo
 async function startApp(){
   try{
     await openDatabase();await renderLibrary();
-    el("health").textContent=pdfAvailable?"Linh Reader v14 · Bộ nhớ OK · PDF.js OK":"Linh Reader v14 · THIẾU PDF.JS";
+    el("health").textContent=pdfAvailable?"Linh Reader v15 · Bộ nhớ OK · PDF.js OK":"Linh Reader v15 · THIẾU PDF.JS";
     if(!pdfAvailable)showStatus("Thiếu thư viện PDF.js.\nKiểm tra thư mục lib.",9000);
   }catch(error){
     console.error("Lỗi khởi động:",error);
-    el("health").textContent="Linh Reader v14 · LỖI BỘ NHỚ";
+    el("health").textContent="Linh Reader v15 · LỖI BỘ NHỚ";
     showStatus("Không mở được IndexedDB:\n"+error.message,12000);
   }
 }
