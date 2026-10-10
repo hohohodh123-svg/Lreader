@@ -16,7 +16,9 @@
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#eee8dc;color:#26221e}
 button{border:0;border-radius:9px;padding:9px 11px;font-size:15px;color:#222;background:#ddd6c8;cursor:pointer}
-button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!important}
+button:active{opacity:.7}
+button:disabled{opacity:.5}
+.hidden{display:none!important}
 #libraryScreen{min-height:100vh}
 .libraryHeader{min-height:62px;position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#f6f0e4;border-bottom:1px solid #ccc}
 .libraryHeader h1{margin:0;font-size:19px}
@@ -103,7 +105,6 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 </head>
 
 <body>
-
 <div id="statusBox" role="status" aria-live="polite"></div>
 
 <section id="libraryScreen">
@@ -132,13 +133,11 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
       <h2>Chưa có sách</h2>
       <p>Nhấn ＋ Thêm sách để chọn PDF.</p>
     </div>
-
     <div id="noResults" class="hidden">
       <div style="font-size:46px">🔎</div>
       <h3>Không tìm thấy sách</h3>
       <p>Thử nhập tên khác nhé.</p>
     </div>
-
     <div id="bookList"></div>
   </div>
 </section>
@@ -148,14 +147,11 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
     <button id="backBtn" aria-label="Về tủ sách">‹</button>
     <div id="readerBookTitle"></div>
     <button id="imagesToggle" class="hidden" type="button"
-      aria-label="Bật hoặc tắt ảnh trong Reader"
-      title="Giữ ảnh minh họa trong Reader">🖼️</button>
+      aria-label="Bật hoặc tắt ảnh trong Reader">🖼️</button>
     <button id="bookmarkToggle" class="bookmarkTool" type="button"
-      aria-label="Đánh dấu trang hiện tại"
-      aria-pressed="false" title="Đánh dấu trang">☆</button>
+      aria-label="Đánh dấu trang hiện tại" aria-pressed="false">☆</button>
     <button id="openBookmarks" class="bookmarkTool" type="button"
-      aria-label="Danh sách dấu trang"
-      title="Danh sách dấu trang">📑</button>
+      aria-label="Danh sách dấu trang">📑</button>
   </div>
 
   <div id="viewer">
@@ -165,56 +161,51 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 
   <div class="bottomBar">
     <button id="prevBtn" aria-label="Trang trước">◀</button>
-    <button id="zoomOut" aria-label="Giảm cỡ chữ hoặc thu nhỏ">A−</button>
-    <button id="pageInfo" type="button"
-      aria-label="Chuyển nhanh đến trang">0 / 0</button>
-    <button id="zoomIn" aria-label="Tăng cỡ chữ hoặc phóng to">A+</button>
+    <button id="zoomOut" aria-label="Giảm cỡ chữ">A−</button>
+    <button id="pageInfo" type="button">0 / 0</button>
+    <button id="zoomIn" aria-label="Tăng cỡ chữ">A+</button>
     <button id="modeBtn">Reader</button>
     <button id="themeBtn" aria-label="Đổi màu nền">☀</button>
     <button id="nextBtn" aria-label="Trang sau">▶</button>
   </div>
 </section>
 
-<div id="renameDialog" class="modalLayer hidden" role="dialog"
-  aria-modal="true" aria-labelledby="renameTitle">
+<div id="renameDialog" class="modalLayer hidden" role="dialog" aria-modal="true">
   <div class="modalPanel">
-    <h2 id="renameTitle">Đổi tên sách</h2>
+    <h2>Đổi tên sách</h2>
     <label for="renameInput">Tên sách hiển thị trong Tủ sách</label>
     <input id="renameInput" type="text" maxlength="150" autocomplete="off">
     <div class="dialogActions">
-      <button id="cancelRename" type="button">Hủy</button>
-      <button id="confirmRename" class="primaryDialogBtn" type="button">Lưu tên</button>
+      <button id="cancelRename">Hủy</button>
+      <button id="confirmRename" class="primaryDialogBtn">Lưu tên</button>
     </div>
   </div>
 </div>
 
-<div id="pageDialog" class="modalLayer hidden" role="dialog"
-  aria-modal="true" aria-labelledby="pageDialogTitle">
+<div id="pageDialog" class="modalLayer hidden" role="dialog" aria-modal="true">
   <div class="modalPanel">
-    <h2 id="pageDialogTitle">Đi tới trang</h2>
+    <h2>Đi tới trang</h2>
     <div id="pageRangeInfo">Trang 1 / 1</div>
-    <input id="pageRange" type="range" min="1" max="1" value="1" aria-label="Chọn trang">
+    <input id="pageRange" type="range" min="1" max="1" value="1">
     <div class="pageNumberRow">
       <span>Trang</span>
-      <input id="pageNumber" type="number" min="1" value="1"
-        inputmode="numeric" aria-label="Nhập số trang">
+      <input id="pageNumber" type="number" min="1" value="1" inputmode="numeric">
       <span id="pageTotal">/ 1</span>
     </div>
     <div class="dialogActions">
-      <button id="cancelJump" type="button">Hủy</button>
-      <button id="confirmJump" class="primaryDialogBtn" type="button">Đi tới</button>
+      <button id="cancelJump">Hủy</button>
+      <button id="confirmJump" class="primaryDialogBtn">Đi tới</button>
     </div>
   </div>
 </div>
 
-<div id="bookmarksDialog" class="modalLayer hidden" role="dialog"
-  aria-modal="true" aria-labelledby="bookmarksTitle">
+<div id="bookmarksDialog" class="modalLayer hidden" role="dialog" aria-modal="true">
   <div class="modalPanel">
-    <h2 id="bookmarksTitle">📑 Dấu trang</h2>
+    <h2>📑 Dấu trang</h2>
     <p id="bookmarksSummary">0 trang đã đánh dấu</p>
     <div id="bookmarksList"></div>
     <div class="dialogActions">
-      <button id="closeBookmarks" class="primaryDialogBtn" type="button">Đóng</button>
+      <button id="closeBookmarks" class="primaryDialogBtn">Đóng</button>
     </div>
   </div>
 </div>
@@ -265,18 +256,25 @@ const themeBtn=el("themeBtn");
 const pdfInput=el("pdfInput");
 const bookSearch=el("bookSearch");
 
-let db=null,pdfDocument=null,currentBook=null,currentState=null;
-let rendering=false,openingBook=false,importing=false;
-let controlsHidden=false,touchStart=null;
-let totalLibraryBooks=0,renameBookId=null,renameBusy=false,statusTimer=null;
+let db=null;
+let pdfDocument=null;
+let currentBook=null;
+let currentState=null;
+let rendering=false;
+let openingBook=false;
+let importing=false;
+let controlsHidden=false;
+let touchStart=null;
+let totalLibraryBooks=0;
+let renameBookId=null;
+let renameBusy=false;
+let statusTimer=null;
 
 function showStatus(message,duration=0){
   clearTimeout(statusTimer);
   el("statusBox").textContent=message;
   el("statusBox").style.display="block";
-  if(duration>0){
-    statusTimer=setTimeout(hideStatus,duration);
-  }
+  if(duration>0)statusTimer=setTimeout(hideStatus,duration);
 }
 
 function hideStatus(){
@@ -300,15 +298,19 @@ function escapeHTML(text){
   return div.innerHTML;
 }
 
+/* DATABASE */
+
 function openDatabase(){
   return new Promise((resolve,reject)=>{
     const req=indexedDB.open(DB_NAME,DB_VERSION);
 
     req.onupgradeneeded=event=>{
       const database=event.target.result;
+
       if(!database.objectStoreNames.contains(BOOK_STORE)){
         database.createObjectStore(BOOK_STORE,{keyPath:"id"});
       }
+
       if(!database.objectStoreNames.contains(STATE_STORE)){
         database.createObjectStore(STATE_STORE,{keyPath:"id"});
       }
@@ -332,6 +334,7 @@ function readRecord(storeName,id){
   return new Promise((resolve,reject)=>{
     const tx=db.transaction(storeName,"readonly");
     const req=tx.objectStore(storeName).get(id);
+
     req.onsuccess=()=>resolve(req.result);
     req.onerror=()=>reject(req.error);
   });
@@ -341,6 +344,7 @@ function readAll(storeName){
   return new Promise((resolve,reject)=>{
     const tx=db.transaction(storeName,"readonly");
     const req=tx.objectStore(storeName).getAll();
+
     req.onsuccess=()=>resolve(req.result||[]);
     req.onerror=()=>reject(req.error);
   });
@@ -381,9 +385,11 @@ function writeRecord(storeName,value,method="put"){
 function deleteStoredBook(id){
   return new Promise((resolve,reject)=>{
     const tx=db.transaction([BOOK_STORE,STATE_STORE],"readwrite");
+
     tx.oncomplete=()=>resolve();
     tx.onerror=()=>reject(tx.error);
     tx.onabort=()=>reject(tx.error);
+
     tx.objectStore(BOOK_STORE).delete(id);
     tx.objectStore(STATE_STORE).delete(id);
   });
@@ -418,17 +424,17 @@ function readFileBuffer(file){
 }
 
 async function getBookBytes(book){
-  if(book.bytes instanceof ArrayBuffer){
-    return new Uint8Array(book.bytes);
-  }
-  if(book.bytes instanceof Uint8Array){
-    return book.bytes;
-  }
+  if(book.bytes instanceof ArrayBuffer)return new Uint8Array(book.bytes);
+  if(book.bytes instanceof Uint8Array)return book.bytes;
+
   if(book.blob){
     return new Uint8Array(await readFileBuffer(book.blob));
   }
+
   throw new Error("Sách không có dữ liệu PDF.");
 }
+
+/* TÌM SÁCH */
 
 function normalizeSearch(text){
   return String(text||"")
@@ -467,6 +473,8 @@ el("clearSearch").onclick=()=>{
   applySearchFilter();
   bookSearch.focus();
 };
+
+/* ĐỔI TÊN SÁCH */
 
 async function openRenameDialog(id,originalName){
   try{
@@ -507,6 +515,7 @@ async function confirmRename(){
 
   try{
     const saved=await readRecord(STATE_STORE,renameBookId);
+
     const state=saved||{
       id:renameBookId,
       currentPage:1,
@@ -544,14 +553,14 @@ el("renameInput").addEventListener("keydown",event=>{
     event.preventDefault();
     confirmRename();
   }
-  if(event.key==="Escape"){
-    closeRenameDialog();
-  }
+  if(event.key==="Escape")closeRenameDialog();
 });
 
 el("renameDialog").addEventListener("click",event=>{
   if(event.target===el("renameDialog"))closeRenameDialog();
 });
+
+/* TỦ SÁCH */
 
 async function renderLibrary(){
   const [books,states]=await Promise.all([
@@ -599,12 +608,11 @@ async function renderLibrary(){
         </div>
       </div>
       <div class="bookActions">
-        <button class="openBookBtn" type="button">Đọc</button>
-        <button class="renameBookBtn" type="button"
-          aria-label="Đổi tên sách" title="Đổi tên">✎</button>
-        <button class="deleteBookBtn" type="button"
-          aria-label="Xóa sách" title="Xóa">🗑</button>
-      </div>`;
+        <button class="openBookBtn">Đọc</button>
+        <button class="renameBookBtn">✎</button>
+        <button class="deleteBookBtn">🗑</button>
+      </div>
+    `;
 
     card.querySelector(".openBookBtn").onclick=()=>openStoredBook(id);
 
@@ -614,6 +622,7 @@ async function renderLibrary(){
 
     card.querySelector(".deleteBookBtn").onclick=async()=>{
       if(!confirm("Xóa sách này?\n\n"+displayName))return;
+
       try{
         await deleteStoredBook(id);
         await renderLibrary();
@@ -627,6 +636,8 @@ async function renderLibrary(){
 
   applySearchFilter();
 }
+
+/* NHẬP PDF */
 
 pdfInput.addEventListener("click",()=>{
   if(!importing)showStatus("Đang chờ iPhone chọn PDF...",5000);
@@ -647,17 +658,19 @@ async function handleSelectedFile(){
     }
 
     showStatus("Đang đọc:\n"+file.name+"\n"+formatSize(file.size));
+
     const bytes=await readFileBuffer(file);
 
     showStatus("Đã đọc file.\nĐang lưu vào Tủ sách...");
 
     const now=Date.now();
+
     const book={
       id:createId(),
       name:file.name,
       size:file.size,
       type:"application/pdf",
-      bytes,
+      bytes:bytes,
       totalPages:0,
       currentPage:1,
       readerMode:false,
@@ -670,9 +683,11 @@ async function handleSelectedFile(){
 
     await writeRecord(BOOK_STORE,book,"add");
     await renderLibrary();
+
     showStatus("Đã lưu sách!\n"+file.name,3500);
   }catch(error){
     console.error("Lỗi thêm sách:",error);
+
     const message=error.name==="QuotaExceededError"
       ?"Bộ nhớ Safari không đủ."
       :(error.message||String(error));
@@ -688,44 +703,7 @@ async function handleSelectedFile(){
 pdfInput.addEventListener("change",handleSelectedFile);
 pdfInput.addEventListener("input",handleSelectedFile);
 
-function cleanVietnameseText(text){
-  if(!text)return"";
-  text=String(text).normalize("NFC");
-
-  const replacements={
-    "\u04E6":"Ợ",
-    "\u04E7":"ợ",
-    "\u04EC":"Ứ",
-    "\u04ED":"ứ",
-    "\u04EE":"Ừ",
-    "\u04EF":"ừ",
-    "\u04F0":"Ử",
-    "\u04F1":"ử",
-    "\u04F2":"Ữ",
-    "\u04F3":"ữ",
-    "\u04F4":"Ự",
-    "\u04F5":"ự",
-    "\u04FA":"Ỹ",
-    "\u04FB":"ỹ"
-  };
-
-  for(const bad in replacements){
-    text=text.split(bad).join(replacements[bad]);
-  }
-
-  return text
-    .replace(/[\u200B\u200C\u200D\uFEFF]/g,"")
-    .replace(/[ \t]+/g," ")
-    .trim();
-}
-
-function normalizeSpacing(text){
-  return text
-    .replace(/\s+([,.;:!?%)\]»”])/g,"$1")
-    .replace(/([(\[«“])\s+/g,"$1")
-    .replace(/\s{2,}/g," ")
-    .trim();
-}
+/* XỬ LÝ VĂN BẢN READER */
 
 function cleanReaderFragment(value){
   let text=String(value==null?"":value).normalize("NFC");
@@ -757,10 +735,16 @@ function cleanReaderFragment(value){
     .replace(/[\r\n\t]/g," ");
 }
 
-/* Ghép các mảnh chữ theo khoảng cách thật trong PDF. */
+function normalizeSpacing(text){
+  return text
+    .replace(/\s+([,.;:!?%)\]»”])/g,"$1")
+    .replace(/([(\[«“])\s+/g,"$1")
+    .replace(/\s{2,}/g," ")
+    .trim();
+}
+
 function joinReaderFragments(items){
   const sorted=items.slice().sort((a,b)=>a.x-b.x);
-
   let output="";
   let previous=null;
 
@@ -770,6 +754,7 @@ function joinReaderFragments(items){
 
     if(previous){
       const gap=item.x-(previous.x+previous.width);
+
       const ref=Math.max(
         6,
         Math.min(28,Math.min(previous.height||14,item.height||14))
@@ -789,7 +774,24 @@ function joinReaderFragments(items){
   return normalizeSpacing(output);
 }
 
-/* Nhận diện chữ cái lớn đầu đoạn và ghép đúng vào đầu câu. */
+function median(numbers){
+  if(!numbers.length)return 0;
+
+  const sorted=[...numbers].sort((a,b)=>a-b);
+  const mid=Math.floor(sorted.length/2);
+
+  return sorted.length%2
+    ?sorted[mid]
+    :(sorted[mid-1]+sorted[mid])/2;
+}
+
+function percentile(numbers,p){
+  if(!numbers.length)return 0;
+
+  const sorted=[...numbers].sort((a,b)=>a-b);
+  return sorted[Math.floor((sorted.length-1)*p)];
+}
+
 function extractReaderLines(textContent){
   const parts=[];
 
@@ -797,6 +799,7 @@ function extractReaderLines(textContent){
     if(!item.str||!item.transform)continue;
 
     const text=cleanReaderFragment(item.str);
+
     const height=Math.max(
       1,
       Number(item.height)||
@@ -822,21 +825,20 @@ function extractReaderLines(textContent){
   const dropped=new Set();
   const prefixes=new Map();
 
+  /* Nhận diện chữ cái lớn đầu đoạn */
   for(const cap of parts){
     if(cap.text.trim().length!==1||
-      !(/^[A-ZÀ-ỸĐ]$/.test(cap.text.trim()))){
-      continue;
-    }
+      !(/^[A-ZÀ-ỸĐ]$/.test(cap.text.trim())))continue;
 
     if(cap.height<base*1.72||cap.width<=0)continue;
 
     const matches=parts.filter(p=>
-      p!==cap &&
-      !dropped.has(p) &&
-      /^[a-zà-ỹđ]/.test(p.text.trimStart()) &&
-      p.x>=cap.x+cap.width-7 &&
-      Math.abs(p.x-(cap.x+cap.width))<Math.max(12,cap.height*.28) &&
-      p.y>=cap.y-cap.height*.20 &&
+      p!==cap&&
+      !dropped.has(p)&&
+      /^[a-zà-ỹđ]/.test(p.text.trimStart())&&
+      p.x>=cap.x+cap.width-7&&
+      Math.abs(p.x-(cap.x+cap.width))<Math.max(12,cap.height*.28)&&
+      p.y>=cap.y-cap.height*.20&&
       p.y<=cap.y+cap.height*.95
     );
 
@@ -915,24 +917,6 @@ function mergeLines(a,b){
   return normalizeSpacing(a+" "+b);
 }
 
-function median(numbers){
-  if(!numbers.length)return 0;
-
-  const sorted=[...numbers].sort((a,b)=>a-b);
-  const mid=Math.floor(sorted.length/2);
-
-  return sorted.length%2
-    ?sorted[mid]
-    :(sorted[mid-1]+sorted[mid])/2;
-}
-
-function percentile(numbers,p){
-  if(!numbers.length)return 0;
-
-  const sorted=[...numbers].sort((a,b)=>a-b);
-  return sorted[Math.floor((sorted.length-1)*p)];
-}
-
 function startsDialogue(text){
   const t=text.trim();
   return /^[—–―−-]\s*\S/.test(t)||/^[“"«‘]/.test(t);
@@ -951,7 +935,9 @@ function isHeading(line){
 
   if(letters.length<4||line.text.length>110)return false;
 
-  const uppercase=letters.filter(ch=>ch===ch.toUpperCase());
+  const uppercase=letters.filter(ch=>
+    ch===ch.toUpperCase()
+  );
 
   return uppercase.length/letters.length>.8&&
     !/[.!?]$/.test(line.text);
@@ -967,6 +953,7 @@ function buildParagraphs(lines){
   const left=percentile(lines.map(l=>l.x),.25);
   const right=percentile(lines.map(l=>l.right),.78);
   const columnWidth=Math.max(100,right-left);
+
   const gaps=[];
 
   for(let i=1;i<lines.length;i++){
@@ -1002,6 +989,7 @@ function buildParagraphs(lines){
     }
 
     const previous=current.last;
+
     const largeGap=previous.y-line.y>normalGap*1.35;
 
     const newIndent=
@@ -1034,6 +1022,7 @@ function buildParagraphs(lines){
 
     if(newParagraph){
       result.push(current);
+
       current={
         text:line.text,
         type,
@@ -1047,9 +1036,10 @@ function buildParagraphs(lines){
   }
 
   if(current)result.push(current);
-
   return result;
 }
+
+/* BOOKMARK VÀ TIẾN ĐỘ ĐỌC */
 
 function normalizeBookmarks(values,maxPage=Infinity){
   if(!Array.isArray(values))return [];
@@ -1090,6 +1080,8 @@ async function saveCurrentState(){
   }
 }
 
+/* MỞ SÁCH */
+
 async function openStoredBook(id){
   if(pdfDocument||rendering||openingBook)return;
 
@@ -1101,9 +1093,7 @@ async function openStoredBook(id){
     const saved=await readRecord(STATE_STORE,id);
 
     if(!book)throw new Error("Không tìm thấy sách.");
-    if(!pdfAvailable){
-      throw new Error("Thiếu thư viện lib/pdf.min.js.");
-    }
+    if(!pdfAvailable)throw new Error("Thiếu thư viện lib/pdf.min.js.");
 
     currentBook=book;
 
@@ -1174,6 +1164,8 @@ async function openStoredBook(id){
   }
 }
 
+/* HIỂN THỊ TRANG */
+
 async function renderCurrentPage(resetScroll=true){
   if(!pdfDocument||rendering)return;
 
@@ -1228,7 +1220,11 @@ async function renderPDF(){
   }).promise;
 }
 
-/* Nhận diện vị trí hình ảnh trong trang PDF. */
+/* ===================================
+   LINH READER V17
+   SỬA VỊ TRÍ HÌNH MINH HỌA
+=================================== */
+
 function pdfMatrixMultiply(a,b){
   return [
     a[0]*b[0]+a[2]*b[1],
@@ -1291,6 +1287,7 @@ async function findPageImageRects(page,viewport,hasText){
 
     if(fn===ops.paintFormXObjectBegin){
       stack.push(ctm.slice());
+
       if(args&&args[0]&&args[0].length===6){
         ctm=pdfMatrixMultiply(ctm,args[0]);
       }
@@ -1311,11 +1308,16 @@ async function findPageImageRects(page,viewport,hasText){
 
     if(!imageOps.has(fn))continue;
 
+    /*
+       SỬA Ở V17:
+       Ảnh PDF dùng hình vuông chuẩn
+       (0,0) đến (1,1), không dùng Y âm.
+    */
     const quad=[
       [0,0],
       [1,0],
-      [0,-1],
-      [1,-1]
+      [0,1],
+      [1,1]
     ].map(([x,y])=>pdfTransformPoint(ctm,x,y));
 
     const pdfY=quad.map(p=>p[1]);
@@ -1399,16 +1401,27 @@ async function getReaderFigures(page,hasText){
     if(!rectangles.length)return [];
 
     sourceCanvas=document.createElement("canvas");
-    sourceCanvas.width=Math.max(1,Math.floor(viewport.width));
-    sourceCanvas.height=Math.max(1,Math.floor(viewport.height));
+
+    sourceCanvas.width=Math.max(
+      1,
+      Math.floor(viewport.width)
+    );
+
+    sourceCanvas.height=Math.max(
+      1,
+      Math.floor(viewport.height)
+    );
 
     const sourceCtx=sourceCanvas.getContext("2d",{
       alpha:false
     });
 
     sourceCtx.fillStyle="#ffffff";
+
     sourceCtx.fillRect(
-      0,0,sourceCanvas.width,sourceCanvas.height
+      0,0,
+      sourceCanvas.width,
+      sourceCanvas.height
     );
 
     await page.render({
@@ -1490,10 +1503,6 @@ function updateReaderImagesButton(){
     "aria-label",
     on?"Tắt ảnh trong Reader":"Bật ảnh trong Reader"
   );
-
-  imagesToggle.title=on
-    ?"Đang giữ ảnh – chạm để tắt"
-    :"Ảnh đang tắt – chạm để bật";
 }
 
 imagesToggle.onclick=async()=>{
@@ -1508,7 +1517,6 @@ imagesToggle.onclick=async()=>{
   await saveCurrentState();
 };
 
-/* Chèn ảnh giữa các đoạn văn theo thứ tự trang gốc. */
 function paragraphToHtml(paragraph){
   const cls=paragraph.type==="heading"
     ?"readerHeading"
@@ -1547,7 +1555,8 @@ function composeReaderHtml(lines,figures,pageNumber){
   function flush(){
     if(buffer.length){
       out+=buildParagraphs(buffer)
-        .map(paragraphToHtml).join("");
+        .map(paragraphToHtml)
+        .join("");
 
       buffer=[];
     }
@@ -1608,6 +1617,8 @@ async function renderReader(){
   }
 }
 
+/* CHUYỂN TRANG */
+
 async function goToPage(pageNumber){
   if(!pdfDocument||rendering)return;
 
@@ -1622,21 +1633,19 @@ async function goToPage(pageNumber){
   if(next===currentState.currentPage)return;
 
   currentState.currentPage=next;
-
   await renderCurrentPage();
   await saveCurrentState();
 }
 
 function changePage(direction){
   if(!currentState)return;
-
-  return goToPage(
-    currentState.currentPage+direction
-  );
+  return goToPage(currentState.currentPage+direction);
 }
 
 el("prevBtn").onclick=()=>changePage(-1);
 el("nextBtn").onclick=()=>changePage(1);
+
+/* NHẢY TRANG */
 
 function openPageDialog(){
   if(!pdfDocument||rendering)return;
@@ -1719,10 +1728,10 @@ el("pageNumber").addEventListener("keydown",event=>{
 });
 
 el("pageDialog").addEventListener("click",event=>{
-  if(event.target===el("pageDialog")){
-    closePageDialog();
-  }
+  if(event.target===el("pageDialog"))closePageDialog();
 });
+
+/* DẤU TRANG */
 
 function updateBookmarkButton(){
   if(!currentState)return;
@@ -1732,7 +1741,6 @@ function updateBookmarkButton(){
   );
 
   const btn=el("bookmarkToggle");
-
   btn.textContent=marked?"★":"☆";
   btn.classList.toggle("isBookmarked",marked);
 
@@ -1743,22 +1751,14 @@ function updateBookmarkButton(){
 
   btn.setAttribute(
     "aria-label",
-    marked?"Bỏ dấu trang hiện tại":
-      "Đánh dấu trang hiện tại"
-  );
-
-  el("openBookmarks").setAttribute(
-    "aria-label",
-    "Danh sách "+currentState.bookmarks.length+" dấu trang"
+    marked?"Bỏ dấu trang hiện tại":"Đánh dấu trang hiện tại"
   );
 }
 
 async function toggleCurrentBookmark(){
-  if(!pdfDocument||!currentState||
-    rendering||openingBook)return;
+  if(!pdfDocument||!currentState||rendering||openingBook)return;
 
   const page=currentState.currentPage;
-
   const wasMarked=currentState.bookmarks.includes(page);
 
   currentState.bookmarks=wasMarked
@@ -1797,7 +1797,7 @@ function refreshBookmarksList(){
     const empty=document.createElement("div");
     empty.className="bookmarksEmpty";
     empty.textContent=
-      "Chưa có dấu trang. Nhấn ☆ trên thanh tiêu đề khi muốn lưu một trang.";
+      "Chưa có dấu trang. Nhấn ☆ khi muốn lưu một trang.";
 
     list.appendChild(empty);
     return;
@@ -1809,8 +1809,6 @@ function refreshBookmarksList(){
 
     const go=document.createElement("button");
     go.className="bookmarkGo";
-    go.type="button";
-
     go.textContent=
       "📖 Trang "+page+
       (page===currentState.currentPage?" · Đang đọc":"");
@@ -1822,13 +1820,7 @@ function refreshBookmarksList(){
 
     const remove=document.createElement("button");
     remove.className="bookmarkDelete";
-    remove.type="button";
     remove.textContent="✕";
-
-    remove.setAttribute(
-      "aria-label",
-      "Xóa dấu trang "+page
-    );
 
     remove.onclick=async()=>{
       if(!currentState)return;
@@ -1863,10 +1855,10 @@ el("openBookmarks").onclick=openBookmarksDialog;
 el("closeBookmarks").onclick=closeBookmarksDialog;
 
 el("bookmarksDialog").addEventListener("click",event=>{
-  if(event.target===el("bookmarksDialog")){
-    closeBookmarksDialog();
-  }
+  if(event.target===el("bookmarksDialog"))closeBookmarksDialog();
 });
+
+/* CỠ CHỮ / ZOOM */
 
 async function changeSize(direction){
   if(!pdfDocument||rendering)return;
@@ -1900,6 +1892,8 @@ async function changeSize(direction){
 el("zoomOut").onclick=()=>changeSize(-1);
 el("zoomIn").onclick=()=>changeSize(1);
 
+/* READER MODE */
+
 modeBtn.onclick=async()=>{
   if(!pdfDocument||rendering)return;
 
@@ -1913,6 +1907,8 @@ modeBtn.onclick=async()=>{
   await renderCurrentPage();
   await saveCurrentState();
 };
+
+/* MÀU NỀN */
 
 function applyTheme(){
   readerScreen.classList.remove("night","sepia");
@@ -1936,6 +1932,8 @@ themeBtn.onclick=async()=>{
   applyTheme();
   await saveCurrentState();
 };
+
+/* VUỐT CHUYỂN TRANG */
 
 function toggleControls(){
   controlsHidden=!controlsHidden;
@@ -1962,9 +1960,7 @@ viewer.addEventListener("touchstart",event=>{
 },{passive:true});
 
 viewer.addEventListener("touchmove",event=>{
-  if(event.touches.length!==1){
-    touchStart=null;
-  }
+  if(event.touches.length!==1)touchStart=null;
 },{passive:true});
 
 viewer.addEventListener("touchcancel",()=>{
@@ -1976,7 +1972,6 @@ viewer.addEventListener("touchend",event=>{
     event.changedTouches.length!==1)return;
 
   const touch=event.changedTouches[0];
-
   const dx=touch.clientX-touchStart.x;
   const dy=touch.clientY-touchStart.y;
 
@@ -2010,6 +2005,8 @@ viewer.addEventListener("click",event=>{
     toggleControls();
   }
 });
+
+/* ĐÓNG SÁCH */
 
 async function closeCurrentBook(){
   if(rendering||openingBook)return;
@@ -2056,14 +2053,16 @@ document.addEventListener("visibilitychange",()=>{
   }
 });
 
+/* KHỞI ĐỘNG */
+
 async function startApp(){
   try{
     await openDatabase();
     await renderLibrary();
 
     el("health").textContent=pdfAvailable
-      ?"Linh Reader v16 · Bộ nhớ OK · PDF.js OK"
-      :"Linh Reader v16 · THIẾU PDF.JS";
+      ?"Linh Reader v17 · Bộ nhớ OK · PDF.js OK"
+      :"Linh Reader v17 · THIẾU PDF.JS";
 
     if(!pdfAvailable){
       showStatus(
@@ -2075,7 +2074,7 @@ async function startApp(){
     console.error("Lỗi khởi động:",error);
 
     el("health").textContent=
-      "Linh Reader v16 · LỖI BỘ NHỚ";
+      "Linh Reader v17 · LỖI BỘ NHỚ";
 
     showStatus(
       "Không mở được IndexedDB:\n"+error.message,

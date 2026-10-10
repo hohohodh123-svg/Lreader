@@ -1,4 +1,4 @@
-const CACHE_NAME = "linh-reader-v16";
+const CACHE_NAME = "linh-reader-v17";
 
 const APP_FILES = [
   "./",
