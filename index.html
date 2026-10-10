@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Linh Reader">
+
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#eee8dc;color:#26221e}
@@ -19,7 +20,6 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 #libraryScreen{min-height:100vh}
 .libraryHeader{min-height:62px;position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#f6f0e4;border-bottom:1px solid #ccc}
 .libraryHeader h1{margin:0;font-size:19px}
-/* Để input thật phủ lên nút: tương thích iOS 15 hơn input display:none. */
 .addFileControl{position:relative;display:flex;align-items:center;justify-content:center;min-height:42px;padding:8px 12px;background:#d8cfbf;border-radius:9px;overflow:hidden;font-size:14px;font-weight:600;white-space:nowrap}
 .addFileControl span{pointer-events:none}
 #pdfInput{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px}
@@ -46,19 +46,19 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 #readerScreen{position:fixed;inset:0;overflow:hidden;z-index:50;background:#eee8dc}
 .readerHeader{position:absolute;top:0;left:0;right:0;height:55px;display:flex;align-items:center;gap:8px;padding:0 8px;background:#f6f0e4;border-bottom:1px solid #ccc;z-index:20;transition:transform .22s,opacity .22s}
 #readerBookTitle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:600}
-/* v15: nút ảnh độc lập, chỉ dùng trong Reader Mode. */
 #imagesToggle{flex-shrink:0;min-width:40px;min-height:38px;padding:4px 6px;font-size:18px;border:1px solid #cfc3b2;background:transparent}
 #imagesToggle.isOn{background:#eadfc5;border-color:#c7a76d}
 .night #imagesToggle{border-color:#666}
 .readerFigure{margin:1.15em auto 1.45em;text-align:center;max-width:100%;break-inside:avoid}
 .readerFigure img{display:block;margin:auto;max-width:100%;height:auto;border-radius:6px;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.16)}
 .readerFigure figcaption{font-size:.58em;line-height:1.45;opacity:.72;margin:.4em 0 0;text-align:center}
-
 #viewer{position:absolute;top:55px;bottom:62px;left:0;right:0;padding:10px;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom;display:flex;align-items:flex-start;justify-content:center;transition:top .22s,bottom .22s}
 #pdfCanvas{display:none;max-width:100%;height:auto;background:white;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 #readerView{display:none;width:100%;max-width:680px;padding:12px 12px 55px;font-size:21px;line-height:1.72;overflow-wrap:break-word;word-break:normal}
 .readerParagraph,.readerDialogue,.readerBullet{text-align:justify;text-align-last:left;line-height:1.72}
-.readerParagraph{margin:0 0 1.05em}.readerDialogue{margin:0 0 1em}.readerBullet{margin:0 0 .7em}
+.readerParagraph{margin:0 0 1.05em}
+.readerDialogue{margin:0 0 1em}
+.readerBullet{margin:0 0 .7em}
 .readerHeading{text-align:left;font-weight:700;line-height:1.45;margin:.7em 0 1em}
 .bottomBar{position:absolute;bottom:0;left:0;right:0;min-height:62px;padding:5px 3px;display:flex;justify-content:space-around;align-items:center;background:#f6f0e4;border-top:1px solid #ccc;z-index:20;transition:transform .22s,opacity .22s}
 .bottomBar button{font-size:14px;padding:8px 7px}
@@ -71,8 +71,8 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 .sepia canvas{filter:sepia(.3) brightness(.9)}
 #readerScreen.night{background:#171717;color:#d8d8d8}
 .night .readerHeader,.night .bottomBar{background:#222;border-color:#444}
-.night button{background:#444;color:#eee}.night canvas{filter:brightness(.6)}
-/* Hộp thoại đổi tên và nhảy trang dùng chung. */
+.night button{background:#444;color:#eee}
+.night canvas{filter:brightness(.6)}
 .modalLayer{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.50);display:flex;align-items:center;justify-content:center;padding:18px}
 .modalPanel{width:100%;max-width:370px;padding:22px 18px 18px;border-radius:16px;background:#fffaf0;color:#26221e;box-shadow:0 10px 35px rgba(0,0,0,.25)}
 .modalPanel h2{font-size:18px;text-align:center;margin:0 0 17px}
@@ -82,7 +82,6 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 #pageRange{width:100%;height:35px;accent-color:#8b7556}
 .pageNumberRow{display:flex;align-items:center;justify-content:center;gap:10px;margin:15px 0 20px}
 #pageNumber{width:100px;height:43px;border:1px solid #bbb;border-radius:9px;background:white;font-size:18px;text-align:center;color:#222}
-/* BOOKMARK v14: gọn trên màn hình iPhone 6s. */
 .bookmarkTool{min-width:36px;min-height:39px;padding:5px 6px;font-size:20px;background:transparent;border:1px solid #cfc3b2;flex-shrink:0}
 #bookmarkToggle.isBookmarked{color:#a5792b;background:#fff3d2}
 .night .bookmarkTool{border-color:#666}
@@ -94,12 +93,19 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 .bookmarkDelete{width:42px;flex-shrink:0;background:#e6d9c7;padding:10px 0}
 .bookmarksEmpty{text-align:center;line-height:1.6;color:#736b5f;padding:18px 5px}
 .dialogActions{display:flex;gap:10px;margin-top:18px}
-.dialogActions button{flex:1;padding:12px}.primaryDialogBtn{background:#9a8466;color:#fff}
-@media(max-width:420px){#bookList{grid-template-columns:repeat(2,minmax(0,1fr))}.libraryHeader h1{font-size:18px}}
+.dialogActions button{flex:1;padding:12px}
+.primaryDialogBtn{background:#9a8466;color:#fff}
+@media(max-width:420px){
+#bookList{grid-template-columns:repeat(2,minmax(0,1fr))}
+.libraryHeader h1{font-size:18px}
+}
 </style>
 </head>
+
 <body>
+
 <div id="statusBox" role="status" aria-live="polite"></div>
+
 <section id="libraryScreen">
   <div class="libraryHeader">
     <h1>📚 Linh Reader</h1>
@@ -108,6 +114,7 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
       <input id="pdfInput" type="file" accept=".pdf,application/pdf" aria-label="Chọn sách PDF">
     </div>
   </div>
+
   <div class="searchArea">
     <div class="searchBox">
       <span class="searchIcon">⌕</span>
@@ -116,45 +123,60 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
     </div>
     <div id="searchCount"></div>
   </div>
+
   <p id="health">Đang khởi động...</p>
+
   <div id="libraryContent">
     <div id="libraryEmpty">
       <div style="font-size:52px">📖</div>
       <h2>Chưa có sách</h2>
       <p>Nhấn ＋ Thêm sách để chọn PDF.</p>
     </div>
+
     <div id="noResults" class="hidden">
       <div style="font-size:46px">🔎</div>
       <h3>Không tìm thấy sách</h3>
       <p>Thử nhập tên khác nhé.</p>
     </div>
+
     <div id="bookList"></div>
   </div>
 </section>
+
 <section id="readerScreen" class="hidden">
   <div class="readerHeader">
     <button id="backBtn" aria-label="Về tủ sách">‹</button>
     <div id="readerBookTitle"></div>
-    <button id="imagesToggle" class="hidden" type="button" aria-label="Bật hoặc tắt ảnh trong Reader" title="Giữ ảnh minh họa trong Reader">🖼️</button>
-    <button id="bookmarkToggle" class="bookmarkTool" type="button" aria-label="Đánh dấu trang hiện tại" aria-pressed="false" title="Đánh dấu trang">☆</button>
-    <button id="openBookmarks" class="bookmarkTool" type="button" aria-label="Danh sách dấu trang" title="Danh sách dấu trang">📑</button>
+    <button id="imagesToggle" class="hidden" type="button"
+      aria-label="Bật hoặc tắt ảnh trong Reader"
+      title="Giữ ảnh minh họa trong Reader">🖼️</button>
+    <button id="bookmarkToggle" class="bookmarkTool" type="button"
+      aria-label="Đánh dấu trang hiện tại"
+      aria-pressed="false" title="Đánh dấu trang">☆</button>
+    <button id="openBookmarks" class="bookmarkTool" type="button"
+      aria-label="Danh sách dấu trang"
+      title="Danh sách dấu trang">📑</button>
   </div>
+
   <div id="viewer">
     <canvas id="pdfCanvas"></canvas>
     <div id="readerView"></div>
   </div>
+
   <div class="bottomBar">
     <button id="prevBtn" aria-label="Trang trước">◀</button>
     <button id="zoomOut" aria-label="Giảm cỡ chữ hoặc thu nhỏ">A−</button>
-    <button id="pageInfo" type="button" aria-label="Chuyển nhanh đến trang">0 / 0</button>
+    <button id="pageInfo" type="button"
+      aria-label="Chuyển nhanh đến trang">0 / 0</button>
     <button id="zoomIn" aria-label="Tăng cỡ chữ hoặc phóng to">A+</button>
     <button id="modeBtn">Reader</button>
     <button id="themeBtn" aria-label="Đổi màu nền">☀</button>
     <button id="nextBtn" aria-label="Trang sau">▶</button>
   </div>
 </section>
-<!-- Hộp thoại đổi tên sách -->
-<div id="renameDialog" class="modalLayer hidden" role="dialog" aria-modal="true" aria-labelledby="renameTitle">
+
+<div id="renameDialog" class="modalLayer hidden" role="dialog"
+  aria-modal="true" aria-labelledby="renameTitle">
   <div class="modalPanel">
     <h2 id="renameTitle">Đổi tên sách</h2>
     <label for="renameInput">Tên sách hiển thị trong Tủ sách</label>
@@ -165,15 +187,17 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
     </div>
   </div>
 </div>
-<!-- Hộp thoại chuyển nhanh đến trang -->
-<div id="pageDialog" class="modalLayer hidden" role="dialog" aria-modal="true" aria-labelledby="pageDialogTitle">
+
+<div id="pageDialog" class="modalLayer hidden" role="dialog"
+  aria-modal="true" aria-labelledby="pageDialogTitle">
   <div class="modalPanel">
     <h2 id="pageDialogTitle">Đi tới trang</h2>
     <div id="pageRangeInfo">Trang 1 / 1</div>
     <input id="pageRange" type="range" min="1" max="1" value="1" aria-label="Chọn trang">
     <div class="pageNumberRow">
       <span>Trang</span>
-      <input id="pageNumber" type="number" min="1" value="1" inputmode="numeric" aria-label="Nhập số trang">
+      <input id="pageNumber" type="number" min="1" value="1"
+        inputmode="numeric" aria-label="Nhập số trang">
       <span id="pageTotal">/ 1</span>
     </div>
     <div class="dialogActions">
@@ -182,8 +206,9 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
     </div>
   </div>
 </div>
-<!-- Bước 5B: danh sách dấu trang theo từng cuốn sách -->
-<div id="bookmarksDialog" class="modalLayer hidden" role="dialog" aria-modal="true" aria-labelledby="bookmarksTitle">
+
+<div id="bookmarksDialog" class="modalLayer hidden" role="dialog"
+  aria-modal="true" aria-labelledby="bookmarksTitle">
   <div class="modalPanel">
     <h2 id="bookmarksTitle">📑 Dấu trang</h2>
     <p id="bookmarksSummary">0 trang đã đánh dấu</p>
@@ -193,26 +218,39 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
     </div>
   </div>
 </div>
+
 <script>
 window.addEventListener("error",function(event){
   const box=document.getElementById("statusBox");
-  if(box){box.style.display="block";box.textContent="Lỗi ứng dụng:\n"+(event.message||"Không tải được tệp.");}
+  if(box){
+    box.style.display="block";
+    box.textContent="Lỗi ứng dụng:\n"+(event.message||"Không tải được tệp.");
+  }
 });
 window.addEventListener("unhandledrejection",function(event){
   const box=document.getElementById("statusBox");
-  if(box){box.style.display="block";box.textContent="Lỗi xử lý:\n"+String(event.reason||"Không rõ nguyên nhân");}
+  if(box){
+    box.style.display="block";
+    box.textContent="Lỗi xử lý:\n"+String(event.reason||"Không rõ nguyên nhân");
+  }
 });
 </script>
+
 <script src="./lib/pdf.min.js"></script>
+
 <script>
 "use strict";
+
 const pdfAvailable=typeof window.pdfjsLib!=="undefined";
-if(pdfAvailable){window.pdfjsLib.GlobalWorkerOptions.workerSrc="./lib/pdf.worker.min.js";}
+if(pdfAvailable){
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc="./lib/pdf.worker.min.js";
+}
 
 const DB_NAME="LinhReaderDB";
 const DB_VERSION=2;
 const BOOK_STORE="books";
 const STATE_STORE="bookState";
+
 const el=id=>document.getElementById(id);
 const canvas=el("pdfCanvas");
 const ctx=canvas.getContext("2d");
@@ -226,34 +264,70 @@ const imagesToggle=el("imagesToggle");
 const themeBtn=el("themeBtn");
 const pdfInput=el("pdfInput");
 const bookSearch=el("bookSearch");
+
 let db=null,pdfDocument=null,currentBook=null,currentState=null;
-let rendering=false,openingBook=false,importing=false,controlsHidden=false,touchStart=null;
+let rendering=false,openingBook=false,importing=false;
+let controlsHidden=false,touchStart=null;
 let totalLibraryBooks=0,renameBookId=null,renameBusy=false,statusTimer=null;
 
 function showStatus(message,duration=0){
   clearTimeout(statusTimer);
   el("statusBox").textContent=message;
   el("statusBox").style.display="block";
-  if(duration>0){statusTimer=setTimeout(hideStatus,duration);}
+  if(duration>0){
+    statusTimer=setTimeout(hideStatus,duration);
+  }
 }
-function hideStatus(){clearTimeout(statusTimer);el("statusBox").style.display="none";}
-function formatSize(bytes){return bytes<1048576?Math.round(bytes/1024)+" KB":(bytes/1048576).toFixed(1)+" MB";}
-function createId(){return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,10);}
-function escapeHTML(text){const div=document.createElement("div");div.textContent=String(text==null?"":text);return div.innerHTML;}
+
+function hideStatus(){
+  clearTimeout(statusTimer);
+  el("statusBox").style.display="none";
+}
+
+function formatSize(bytes){
+  return bytes<1048576
+    ?Math.round(bytes/1024)+" KB"
+    :(bytes/1048576).toFixed(1)+" MB";
+}
+
+function createId(){
+  return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,10);
+}
+
+function escapeHTML(text){
+  const div=document.createElement("div");
+  div.textContent=String(text==null?"":text);
+  return div.innerHTML;
+}
 
 function openDatabase(){
   return new Promise((resolve,reject)=>{
     const req=indexedDB.open(DB_NAME,DB_VERSION);
+
     req.onupgradeneeded=event=>{
       const database=event.target.result;
-      if(!database.objectStoreNames.contains(BOOK_STORE)){database.createObjectStore(BOOK_STORE,{keyPath:"id"});}
-      if(!database.objectStoreNames.contains(STATE_STORE)){database.createObjectStore(STATE_STORE,{keyPath:"id"});}
+      if(!database.objectStoreNames.contains(BOOK_STORE)){
+        database.createObjectStore(BOOK_STORE,{keyPath:"id"});
+      }
+      if(!database.objectStoreNames.contains(STATE_STORE)){
+        database.createObjectStore(STATE_STORE,{keyPath:"id"});
+      }
     };
-    req.onblocked=()=>showStatus("Bộ nhớ đang bị khóa.\nHãy đóng các cửa sổ Linh Reader khác.");
-    req.onsuccess=()=>{db=req.result;db.onversionchange=()=>db.close();resolve(db);};
+
+    req.onblocked=()=>{
+      showStatus("Bộ nhớ đang bị khóa.\nHãy đóng các cửa sổ Linh Reader khác.");
+    };
+
+    req.onsuccess=()=>{
+      db=req.result;
+      db.onversionchange=()=>db.close();
+      resolve(db);
+    };
+
     req.onerror=()=>reject(req.error);
   });
 }
+
 function readRecord(storeName,id){
   return new Promise((resolve,reject)=>{
     const tx=db.transaction(storeName,"readonly");
@@ -262,6 +336,7 @@ function readRecord(storeName,id){
     req.onerror=()=>reject(req.error);
   });
 }
+
 function readAll(storeName){
   return new Promise((resolve,reject)=>{
     const tx=db.transaction(storeName,"readonly");
@@ -270,24 +345,39 @@ function readAll(storeName){
     req.onerror=()=>reject(req.error);
   });
 }
+
 function writeRecord(storeName,value,method="put"){
   return new Promise((resolve,reject)=>{
     const tx=db.transaction(storeName,"readwrite");
     let finished=false;
+
     const timeout=setTimeout(()=>{
-      if(!finished){finished=true;reject(new Error("Lưu quá lâu. Bộ nhớ Safari có thể đang bị treo."));}
+      if(!finished){
+        finished=true;
+        reject(new Error("Lưu quá lâu. Bộ nhớ Safari có thể đang bị treo."));
+      }
     },45000);
+
     function finish(error){
       if(finished)return;
-      finished=true;clearTimeout(timeout);
-      if(error)reject(error);else resolve();
+      finished=true;
+      clearTimeout(timeout);
+      if(error)reject(error);
+      else resolve();
     }
+
     tx.oncomplete=()=>finish();
     tx.onerror=()=>finish(tx.error||new Error("Lỗi lưu dữ liệu"));
     tx.onabort=()=>finish(tx.error||new Error("Giao dịch bị hủy"));
-    try{tx.objectStore(storeName)[method](value);}catch(error){finish(error);}
+
+    try{
+      tx.objectStore(storeName)[method](value);
+    }catch(error){
+      finish(error);
+    }
   });
 }
+
 function deleteStoredBook(id){
   return new Promise((resolve,reject)=>{
     const tx=db.transaction([BOOK_STORE,STATE_STORE],"readwrite");
@@ -298,42 +388,86 @@ function deleteStoredBook(id){
     tx.objectStore(STATE_STORE).delete(id);
   });
 }
+
 function readFileBuffer(file){
   return new Promise((resolve,reject)=>{
     const reader=new FileReader();
-    reader.onload=()=>reader.result instanceof ArrayBuffer?resolve(reader.result):reject(new Error("Không nhận được dữ liệu PDF."));
-    reader.onerror=()=>reject(reader.error||new Error("Không đọc được file."));
-    reader.onabort=()=>reject(new Error("Đã hủy đọc file."));
-    try{reader.readAsArrayBuffer(file);}catch(error){reject(error);}
+
+    reader.onload=()=>{
+      if(reader.result instanceof ArrayBuffer){
+        resolve(reader.result);
+      }else{
+        reject(new Error("Không nhận được dữ liệu PDF."));
+      }
+    };
+
+    reader.onerror=()=>{
+      reject(reader.error||new Error("Không đọc được file."));
+    };
+
+    reader.onabort=()=>{
+      reject(new Error("Đã hủy đọc file."));
+    };
+
+    try{
+      reader.readAsArrayBuffer(file);
+    }catch(error){
+      reject(error);
+    }
   });
 }
+
 async function getBookBytes(book){
-  if(book.bytes instanceof ArrayBuffer)return new Uint8Array(book.bytes);
-  if(book.bytes instanceof Uint8Array)return book.bytes;
-  if(book.blob)return new Uint8Array(await readFileBuffer(book.blob));
+  if(book.bytes instanceof ArrayBuffer){
+    return new Uint8Array(book.bytes);
+  }
+  if(book.bytes instanceof Uint8Array){
+    return book.bytes;
+  }
+  if(book.blob){
+    return new Uint8Array(await readFileBuffer(book.blob));
+  }
   throw new Error("Sách không có dữ liệu PDF.");
 }
 
-/* Tìm kiếm không dấu: 'dau tu' tìm thấy 'Đầu tư'. */
 function normalizeSearch(text){
-  return String(text||"").toLowerCase().replace(/đ/g,"d").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+  return String(text||"")
+    .toLowerCase()
+    .replace(/đ/g,"d")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .trim();
 }
+
 function applySearchFilter(){
   const query=normalizeSearch(bookSearch.value);
   let visible=0;
+
   for(const card of bookList.children){
     const matched=!query||card.dataset.search.includes(query);
     card.classList.toggle("hidden",!matched);
     if(matched)visible++;
   }
+
   el("libraryEmpty").classList.toggle("hidden",totalLibraryBooks!==0);
   el("noResults").classList.toggle("hidden",totalLibraryBooks===0||visible!==0);
-  el("searchCount").textContent=totalLibraryBooks===0?"0 cuốn sách":!query?totalLibraryBooks+" cuốn sách":"Tìm thấy "+visible+" / "+totalLibraryBooks+" cuốn";
-}
-bookSearch.addEventListener("input",applySearchFilter);
-el("clearSearch").onclick=()=>{bookSearch.value="";applySearchFilter();bookSearch.focus();};
 
-/* Đổi tên chỉ ghi bookState, không ghi lại file PDF nặng. */
+  el("searchCount").textContent=
+    totalLibraryBooks===0
+      ?"0 cuốn sách"
+      :!query
+        ?totalLibraryBooks+" cuốn sách"
+        :"Tìm thấy "+visible+" / "+totalLibraryBooks+" cuốn";
+}
+
+bookSearch.addEventListener("input",applySearchFilter);
+
+el("clearSearch").onclick=()=>{
+  bookSearch.value="";
+  applySearchFilter();
+  bookSearch.focus();
+};
+
 async function openRenameDialog(id,originalName){
   try{
     const saved=await readRecord(STATE_STORE,id);
@@ -341,601 +475,1627 @@ async function openRenameDialog(id,originalName){
     el("renameInput").value=saved?.displayName||originalName;
     el("renameDialog").classList.remove("hidden");
     el("renameInput").focus();
-  }catch(error){showStatus("Không mở được phần đổi tên:\n"+error.message,6500);}
+  }catch(error){
+    showStatus("Không mở được phần đổi tên:\n"+error.message,6500);
+  }
 }
+
 function closeRenameDialog(){
   if(renameBusy)return;
   renameBookId=null;
   el("renameDialog").classList.add("hidden");
   el("renameInput").blur();
 }
+
 async function confirmRename(){
   if(renameBusy||!renameBookId)return;
+
   const newName=el("renameInput").value.replace(/\s+/g," ").trim();
-  if(!newName){showStatus("Tên sách không được để trống.",3000);return;}
-  if(newName.length>150){showStatus("Tên sách tối đa 150 ký tự.",3000);return;}
+
+  if(!newName){
+    showStatus("Tên sách không được để trống.",3000);
+    return;
+  }
+
+  if(newName.length>150){
+    showStatus("Tên sách tối đa 150 ký tự.",3000);
+    return;
+  }
+
   renameBusy=true;
   el("confirmRename").disabled=true;
+
   try{
     const saved=await readRecord(STATE_STORE,renameBookId);
-    const state=saved||{id:renameBookId,currentPage:1,totalPages:0,readerMode:false,readerFontSize:21,scale:1.2,theme:0};
+    const state=saved||{
+      id:renameBookId,
+      currentPage:1,
+      totalPages:0,
+      readerMode:false,
+      readerFontSize:21,
+      scale:1.2,
+      theme:0
+    };
+
     state.id=renameBookId;
     state.displayName=newName;
+
     await writeRecord(STATE_STORE,state);
+
     renameBookId=null;
     el("renameDialog").classList.add("hidden");
     el("renameInput").blur();
+
     await renderLibrary();
     showStatus("Đã đổi tên sách.",2300);
-  }catch(error){showStatus("Không đổi được tên:\n"+error.message,6500);}
-  finally{renameBusy=false;el("confirmRename").disabled=false;}
+  }catch(error){
+    showStatus("Không đổi được tên:\n"+error.message,6500);
+  }finally{
+    renameBusy=false;
+    el("confirmRename").disabled=false;
+  }
 }
+
 el("cancelRename").onclick=closeRenameDialog;
 el("confirmRename").onclick=confirmRename;
+
 el("renameInput").addEventListener("keydown",event=>{
-  if(event.key==="Enter"){event.preventDefault();confirmRename();}
-  if(event.key==="Escape"){closeRenameDialog();}
+  if(event.key==="Enter"){
+    event.preventDefault();
+    confirmRename();
+  }
+  if(event.key==="Escape"){
+    closeRenameDialog();
+  }
 });
-el("renameDialog").addEventListener("click",event=>{if(event.target===el("renameDialog"))closeRenameDialog();});
+
+el("renameDialog").addEventListener("click",event=>{
+  if(event.target===el("renameDialog"))closeRenameDialog();
+});
 
 async function renderLibrary(){
-  const [books,states]=await Promise.all([readAll(BOOK_STORE),readAll(STATE_STORE)]);
+  const [books,states]=await Promise.all([
+    readAll(BOOK_STORE),
+    readAll(STATE_STORE)
+  ]);
+
   const stateMap=new Map(states.map(state=>[state.id,state]));
-  books.sort((a,b)=>(stateMap.get(b.id)?.lastOpenedAt||b.addedAt||0)-(stateMap.get(a.id)?.lastOpenedAt||a.addedAt||0));
+
+  books.sort((a,b)=>
+    (stateMap.get(b.id)?.lastOpenedAt||b.addedAt||0)-
+    (stateMap.get(a.id)?.lastOpenedAt||a.addedAt||0)
+  );
+
   bookList.innerHTML="";
   totalLibraryBooks=books.length;
+
   for(const book of books){
-    const id=book.id,originalName=book.name;
+    const id=book.id;
+    const originalName=book.name;
     const state=stateMap.get(id)||book;
     const displayName=state.displayName||originalName;
     const page=state.currentPage||1;
     const total=state.totalPages||book.totalPages||0;
     const progress=total?Math.min(100,Math.round(page/total*100)):0;
     const bookmarkCount=normalizeBookmarks(state.bookmarks).length;
+
     const card=document.createElement("div");
     card.className="bookCard";
     card.dataset.search=normalizeSearch(displayName+" "+originalName);
+
     card.innerHTML=`
       <div>
         <div class="bookCover">📕</div>
         <div class="bookTitle">${escapeHTML(displayName)}</div>
-        <div class="bookMeta">${total?`Trang ${page} / ${total}`:"Chưa mở sách"}<br>${formatSize(book.size||0)}${total?` · ${progress}%`:""}${bookmarkCount?`<br>🔖 ${bookmarkCount} dấu trang`:""}</div>
-        <div class="progressTrack"><div class="progressBar" style="width:${progress}%"></div></div>
+        <div class="bookMeta">
+          ${total?`Trang ${page} / ${total}`:"Chưa mở sách"}
+          <br>
+          ${formatSize(book.size||0)}
+          ${total?` · ${progress}%`:""}
+          ${bookmarkCount?`<br>🔖 ${bookmarkCount} dấu trang`:""}
+        </div>
+        <div class="progressTrack">
+          <div class="progressBar" style="width:${progress}%"></div>
+        </div>
       </div>
       <div class="bookActions">
         <button class="openBookBtn" type="button">Đọc</button>
-        <button class="renameBookBtn" type="button" aria-label="Đổi tên sách" title="Đổi tên">✎</button>
-        <button class="deleteBookBtn" type="button" aria-label="Xóa sách" title="Xóa">🗑</button>
+        <button class="renameBookBtn" type="button"
+          aria-label="Đổi tên sách" title="Đổi tên">✎</button>
+        <button class="deleteBookBtn" type="button"
+          aria-label="Xóa sách" title="Xóa">🗑</button>
       </div>`;
+
     card.querySelector(".openBookBtn").onclick=()=>openStoredBook(id);
-    card.querySelector(".renameBookBtn").onclick=()=>openRenameDialog(id,originalName);
+
+    card.querySelector(".renameBookBtn").onclick=()=>{
+      openRenameDialog(id,originalName);
+    };
+
     card.querySelector(".deleteBookBtn").onclick=async()=>{
       if(!confirm("Xóa sách này?\n\n"+displayName))return;
-      try{await deleteStoredBook(id);await renderLibrary();}
-      catch(error){showStatus("Không xóa được:\n"+error.message,6500);}
+      try{
+        await deleteStoredBook(id);
+        await renderLibrary();
+      }catch(error){
+        showStatus("Không xóa được:\n"+error.message,6500);
+      }
     };
+
     bookList.appendChild(card);
   }
+
   applySearchFilter();
 }
 
-pdfInput.addEventListener("click",()=>{if(!importing)showStatus("Đang chờ iPhone chọn PDF...",5000);});
+pdfInput.addEventListener("click",()=>{
+  if(!importing)showStatus("Đang chờ iPhone chọn PDF...",5000);
+});
+
 async function handleSelectedFile(){
   if(importing)return;
+
   const file=pdfInput.files&&pdfInput.files[0];
   if(!file)return;
-  importing=true;pdfInput.disabled=true;
+
+  importing=true;
+  pdfInput.disabled=true;
+
   try{
-    if(!file.name.toLowerCase().endsWith(".pdf")&&file.type!=="application/pdf")throw new Error("File được chọn không phải PDF.");
+    if(!file.name.toLowerCase().endsWith(".pdf")&&file.type!=="application/pdf"){
+      throw new Error("File được chọn không phải PDF.");
+    }
+
     showStatus("Đang đọc:\n"+file.name+"\n"+formatSize(file.size));
     const bytes=await readFileBuffer(file);
+
     showStatus("Đã đọc file.\nĐang lưu vào Tủ sách...");
+
     const now=Date.now();
-    const book={id:createId(),name:file.name,size:file.size,type:"application/pdf",bytes,totalPages:0,currentPage:1,readerMode:false,readerFontSize:21,scale:1.2,theme:0,addedAt:now,lastOpenedAt:now};
+    const book={
+      id:createId(),
+      name:file.name,
+      size:file.size,
+      type:"application/pdf",
+      bytes,
+      totalPages:0,
+      currentPage:1,
+      readerMode:false,
+      readerFontSize:21,
+      scale:1.2,
+      theme:0,
+      addedAt:now,
+      lastOpenedAt:now
+    };
+
     await writeRecord(BOOK_STORE,book,"add");
     await renderLibrary();
     showStatus("Đã lưu sách!\n"+file.name,3500);
   }catch(error){
     console.error("Lỗi thêm sách:",error);
-    const message=error.name==="QuotaExceededError"?"Bộ nhớ Safari không đủ.":(error.message||String(error));
+    const message=error.name==="QuotaExceededError"
+      ?"Bộ nhớ Safari không đủ."
+      :(error.message||String(error));
+
     showStatus("Không lưu được PDF:\n"+message,10000);
-  }finally{pdfInput.value="";pdfInput.disabled=false;importing=false;}
+  }finally{
+    pdfInput.value="";
+    pdfInput.disabled=false;
+    importing=false;
+  }
 }
+
 pdfInput.addEventListener("change",handleSelectedFile);
 pdfInput.addEventListener("input",handleSelectedFile);
 
-/* Hiển thị văn bản Reader Mode: giữ cách ghép đoạn và căn đều từ v12. */
 function cleanVietnameseText(text){
   if(!text)return"";
   text=String(text).normalize("NFC");
-  const replacements={"\u04E6":"Ợ","\u04E7":"ợ","\u04EC":"Ứ","\u04ED":"ứ","\u04EE":"Ừ","\u04EF":"ừ","\u04F0":"Ử","\u04F1":"ử","\u04F2":"Ữ","\u04F3":"ữ","\u04F4":"Ự","\u04F5":"ự","\u04FA":"Ỹ","\u04FB":"ỹ"};
-  for(const bad in replacements){text=text.split(bad).join(replacements[bad]);}
-  return text.replace(/[\u200B\u200C\u200D\uFEFF]/g,"").replace(/[ \t]+/g," ").trim();
+
+  const replacements={
+    "\u04E6":"Ợ",
+    "\u04E7":"ợ",
+    "\u04EC":"Ứ",
+    "\u04ED":"ứ",
+    "\u04EE":"Ừ",
+    "\u04EF":"ừ",
+    "\u04F0":"Ử",
+    "\u04F1":"ử",
+    "\u04F2":"Ữ",
+    "\u04F3":"ữ",
+    "\u04F4":"Ự",
+    "\u04F5":"ự",
+    "\u04FA":"Ỹ",
+    "\u04FB":"ỹ"
+  };
+
+  for(const bad in replacements){
+    text=text.split(bad).join(replacements[bad]);
+  }
+
+  return text
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g,"")
+    .replace(/[ \t]+/g," ")
+    .trim();
 }
-function normalizeSpacing(text){return text.replace(/\s+([,.;:!?%)\]»”])/g,"$1").replace(/([(\[«“])\s+/g,"$1").replace(/\s{2,}/g," ").trim();}
+
+function normalizeSpacing(text){
+  return text
+    .replace(/\s+([,.;:!?%)\]»”])/g,"$1")
+    .replace(/([(\[«“])\s+/g,"$1")
+    .replace(/\s{2,}/g," ")
+    .trim();
+}
+
+function cleanReaderFragment(value){
+  let text=String(value==null?"":value).normalize("NFC");
+
+  const replacements={
+    "\u04E6":"Ợ",
+    "\u04E7":"ợ",
+    "\u04EC":"Ứ",
+    "\u04ED":"ứ",
+    "\u04EE":"Ừ",
+    "\u04EF":"ừ",
+    "\u04F0":"Ử",
+    "\u04F1":"ử",
+    "\u04F2":"Ữ",
+    "\u04F3":"ữ",
+    "\u04F4":"Ự",
+    "\u04F5":"ự",
+    "\u04FA":"Ỹ",
+    "\u04FB":"ỹ"
+  };
+
+  for(const bad in replacements){
+    text=text.split(bad).join(replacements[bad]);
+  }
+
+  return text
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g,"")
+    .replace(/[\u00a0\u202f]/g," ")
+    .replace(/[\r\n\t]/g," ");
+}
+
+/* Ghép các mảnh chữ theo khoảng cách thật trong PDF. */
+function joinReaderFragments(items){
+  const sorted=items.slice().sort((a,b)=>a.x-b.x);
+
+  let output="";
+  let previous=null;
+
+  for(const item of sorted){
+    const part=item.text;
+    if(!part)continue;
+
+    if(previous){
+      const gap=item.x-(previous.x+previous.width);
+      const ref=Math.max(
+        6,
+        Math.min(28,Math.min(previous.height||14,item.height||14))
+      );
+
+      const alreadySpace=/\s$/.test(output)||/^\s/.test(part);
+
+      if(!alreadySpace&&gap>Math.max(1.2,ref*.27)){
+        output+=" ";
+      }
+    }
+
+    output+=part;
+    previous=item;
+  }
+
+  return normalizeSpacing(output);
+}
+
+/* Nhận diện chữ cái lớn đầu đoạn và ghép đúng vào đầu câu. */
+function extractReaderLines(textContent){
+  const parts=[];
+
+  for(const item of textContent.items){
+    if(!item.str||!item.transform)continue;
+
+    const text=cleanReaderFragment(item.str);
+    const height=Math.max(
+      1,
+      Number(item.height)||
+      Math.hypot(item.transform[2],item.transform[3])||
+      14
+    );
+
+    parts.push({
+      text,
+      x:Number(item.transform[4])||0,
+      y:Number(item.transform[5])||0,
+      width:Math.max(0,Number(item.width)||0),
+      height
+    });
+  }
+
+  if(!parts.length)return [];
+
+  const base=median(
+    parts.map(p=>p.height).filter(h=>h>3&&h<60)
+  )||14;
+
+  const dropped=new Set();
+  const prefixes=new Map();
+
+  for(const cap of parts){
+    if(cap.text.trim().length!==1||
+      !(/^[A-ZÀ-ỸĐ]$/.test(cap.text.trim()))){
+      continue;
+    }
+
+    if(cap.height<base*1.72||cap.width<=0)continue;
+
+    const matches=parts.filter(p=>
+      p!==cap &&
+      !dropped.has(p) &&
+      /^[a-zà-ỹđ]/.test(p.text.trimStart()) &&
+      p.x>=cap.x+cap.width-7 &&
+      Math.abs(p.x-(cap.x+cap.width))<Math.max(12,cap.height*.28) &&
+      p.y>=cap.y-cap.height*.20 &&
+      p.y<=cap.y+cap.height*.95
+    );
+
+    matches.sort((a,b)=>
+      Math.abs(a.x-(cap.x+cap.width))*2+
+      Math.abs((a.y-cap.y)-cap.height*.46)-
+      (
+        Math.abs(b.x-(cap.x+cap.width))*2+
+        Math.abs((b.y-cap.y)-cap.height*.46)
+      )
+    );
+
+    if(matches.length){
+      const first=matches[0];
+
+      prefixes.set(first,{
+        text:cap.text.trim(),
+        x:cap.x,
+        right:cap.x+cap.width
+      });
+
+      dropped.add(cap);
+    }
+  }
+
+  const rows=[];
+
+  for(const part of parts){
+    if(dropped.has(part))continue;
+
+    let line=rows.find(row=>
+      Math.abs(row.y-part.y)<
+      Math.min(5.5,Math.max(3.5,base*.34))
+    );
+
+    if(!line){
+      line={y:part.y,items:[],dropCap:null};
+      rows.push(line);
+    }
+
+    line.items.push(part);
+
+    if(prefixes.has(part)){
+      line.dropCap=prefixes.get(part);
+    }
+  }
+
+  rows.sort((a,b)=>b.y-a.y);
+
+  return rows.map(row=>{
+    row.items.sort((a,b)=>a.x-b.x);
+
+    const first=row.items[0];
+    const lastRight=Math.max(
+      ...row.items.map(item=>item.x+item.width)
+    );
+
+    const cap=row.dropCap;
+    const text=(cap?cap.text:"")+joinReaderFragments(row.items);
+
+    return {
+      x:cap?cap.x:first.x,
+      right:lastRight,
+      y:row.y,
+      text:normalizeSpacing(text),
+      hasDropCap:!!cap,
+      dropCapRight:cap?cap.right:null
+    };
+  }).filter(line=>line.text);
+}
+
 function mergeLines(a,b){
-  if(/[A-Za-zÀ-ỹĐđ]-$/.test(a)&&/^[a-zà-ỹđ]/.test(b))return normalizeSpacing(a.slice(0,-1)+b);
+  if(/[A-Za-zÀ-ỹĐđ]-$/.test(a)&&/^[a-zà-ỹđ]/.test(b)){
+    return normalizeSpacing(a.slice(0,-1)+b);
+  }
   return normalizeSpacing(a+" "+b);
 }
+
 function median(numbers){
   if(!numbers.length)return 0;
-  const sorted=[...numbers].sort((a,b)=>a-b),mid=Math.floor(sorted.length/2);
-  return sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2;
+
+  const sorted=[...numbers].sort((a,b)=>a-b);
+  const mid=Math.floor(sorted.length/2);
+
+  return sorted.length%2
+    ?sorted[mid]
+    :(sorted[mid-1]+sorted[mid])/2;
 }
-function percentile(numbers,p){if(!numbers.length)return 0;const sorted=[...numbers].sort((a,b)=>a-b);return sorted[Math.floor((sorted.length-1)*p)];}
-function startsDialogue(text){const t=text.trim();return /^[—–―−-]\s*\S/.test(t)||/^[“"«‘]/.test(t);}
-function isBullet(text){return /^[•●▪◦*]\s*/.test(text)||/^\d+[.)]\s+/.test(text)||/^[a-zA-Z][.)]\s+/.test(text);}
+
+function percentile(numbers,p){
+  if(!numbers.length)return 0;
+
+  const sorted=[...numbers].sort((a,b)=>a-b);
+  return sorted[Math.floor((sorted.length-1)*p)];
+}
+
+function startsDialogue(text){
+  const t=text.trim();
+  return /^[—–―−-]\s*\S/.test(t)||/^[“"«‘]/.test(t);
+}
+
+function isBullet(text){
+  return /^[•●▪◦*]\s*/.test(text)||
+    /^\d+[.)]\s+/.test(text)||
+    /^[a-zA-Z][.)]\s+/.test(text);
+}
+
 function isHeading(line){
-  const letters=Array.from(line.text).filter(ch=>ch.toLowerCase()!==ch.toUpperCase());
+  const letters=Array.from(line.text).filter(ch=>
+    ch.toLowerCase()!==ch.toUpperCase()
+  );
+
   if(letters.length<4||line.text.length>110)return false;
+
   const uppercase=letters.filter(ch=>ch===ch.toUpperCase());
-  return uppercase.length/letters.length>.8&&!/[.!?]$/.test(line.text);
+
+  return uppercase.length/letters.length>.8&&
+    !/[.!?]$/.test(line.text);
 }
-function endsSentence(text){return /[.!?…][”"'’»)]*$/.test(text.trim());}
+
+function endsSentence(text){
+  return /[.!?…][”"'’»)]*$/.test(text.trim());
+}
+
 function buildParagraphs(lines){
-  if(!lines.length)return[];
+  if(!lines.length)return [];
+
   const left=percentile(lines.map(l=>l.x),.25);
   const right=percentile(lines.map(l=>l.right),.78);
   const columnWidth=Math.max(100,right-left);
   const gaps=[];
+
   for(let i=1;i<lines.length;i++){
     const gap=lines[i-1].y-lines[i].y;
     if(gap>2&&gap<70)gaps.push(gap);
   }
-  const normalGap=median(gaps)||14,result=[];
+
+  const normalGap=median(gaps)||14;
+  const result=[];
   let current=null;
+
   for(const line of lines){
-    const dialogue=startsDialogue(line.text),bullet=isBullet(line.text),heading=isHeading(line);
-    const type=heading?"heading":dialogue?"dialogue":bullet?"bullet":"paragraph";
-    if(!current){current={text:line.text,type,last:line,firstY:line.y};continue;}
+    const dialogue=startsDialogue(line.text);
+    const bullet=isBullet(line.text);
+    const heading=isHeading(line);
+
+    const type=heading
+      ?"heading"
+      :dialogue
+        ?"dialogue"
+        :bullet
+          ?"bullet"
+          :"paragraph";
+
+    if(!current){
+      current={
+        text:line.text,
+        type,
+        last:line,
+        firstY:line.y
+      };
+      continue;
+    }
+
     const previous=current.last;
     const largeGap=previous.y-line.y>normalGap*1.35;
-    const newIndent=line.x-left>Math.max(12,normalGap*.85)&&Math.abs(previous.x-left)<16;
-    const previousShort=previous.right<right-Math.max(18,columnWidth*.12);
-    const finishedParagraph=previousShort&&endsSentence(previous.text);
-    const newParagraph=dialogue||bullet||heading||current.type==="heading"||largeGap||newIndent||finishedParagraph;
-    if(newParagraph){result.push(current);current={text:line.text,type,last:line,firstY:line.y};}
-    else{current.text=mergeLines(current.text,line.text);current.last=line;}
+
+    const newIndent=
+      line.x-left>Math.max(12,normalGap*.85)&&
+      Math.abs(previous.x-left)<16;
+
+    const previousShort=
+      previous.right<
+      right-Math.max(18,columnWidth*.12);
+
+    const finishedParagraph=
+      previousShort&&endsSentence(previous.text);
+
+    const dropCapSecondLine=
+      Boolean(previous.hasDropCap)&&
+      Math.abs(line.x-previous.dropCapRight)<
+        Math.max(12,normalGap*.60)&&
+      previous.y-line.y<normalGap*1.65;
+
+    const newParagraph=
+      !dropCapSecondLine&&(
+        dialogue||
+        bullet||
+        heading||
+        current.type==="heading"||
+        largeGap||
+        newIndent||
+        finishedParagraph
+      );
+
+    if(newParagraph){
+      result.push(current);
+      current={
+        text:line.text,
+        type,
+        last:line,
+        firstY:line.y
+      };
+    }else{
+      current.text=mergeLines(current.text,line.text);
+      current.last=line;
+    }
   }
+
   if(current)result.push(current);
+
   return result;
 }
 
-/* Dấu trang chỉ lưu số trang trong bookState; không sửa dữ liệu PDF. */
 function normalizeBookmarks(values,maxPage=Infinity){
   if(!Array.isArray(values))return [];
-  return [...new Set(values.map(Number).filter(page=>Number.isInteger(page)&&page>=1&&page<=maxPage))].sort((a,b)=>a-b);
+
+  return [...new Set(
+    values.map(Number).filter(page=>
+      Number.isInteger(page)&&
+      page>=1&&
+      page<=maxPage
+    )
+  )].sort((a,b)=>a-b);
 }
+
 function makeCurrentState(){
-  return {id:currentBook.id,displayName:currentState.displayName||null,currentPage:currentState.currentPage,totalPages:currentState.totalPages,readerMode:currentState.readerMode,showReaderImages:currentState.showReaderImages!==false,readerFontSize:currentState.readerFontSize,scale:currentState.scale,theme:currentState.theme,bookmarks:normalizeBookmarks(currentState.bookmarks),lastOpenedAt:Date.now()};
+  return {
+    id:currentBook.id,
+    displayName:currentState.displayName||null,
+    currentPage:currentState.currentPage,
+    totalPages:currentState.totalPages,
+    readerMode:currentState.readerMode,
+    showReaderImages:currentState.showReaderImages!==false,
+    readerFontSize:currentState.readerFontSize,
+    scale:currentState.scale,
+    theme:currentState.theme,
+    bookmarks:normalizeBookmarks(currentState.bookmarks),
+    lastOpenedAt:Date.now()
+  };
 }
+
 async function saveCurrentState(){
   if(!currentBook||!currentState)return;
-  try{await writeRecord(STATE_STORE,makeCurrentState());}
-  catch(error){console.error("Lỗi lưu tiến độ:",error);showStatus("Không lưu được tiến độ:\n"+error.message,6500);}
+
+  try{
+    await writeRecord(STATE_STORE,makeCurrentState());
+  }catch(error){
+    console.error("Lỗi lưu tiến độ:",error);
+    showStatus("Không lưu được tiến độ:\n"+error.message,6500);
+  }
 }
+
 async function openStoredBook(id){
   if(pdfDocument||rendering||openingBook)return;
-  openingBook=true;showStatus("Đang mở sách...");
+
+  openingBook=true;
+  showStatus("Đang mở sách...");
+
   try{
     const book=await readRecord(BOOK_STORE,id);
     const saved=await readRecord(STATE_STORE,id);
+
     if(!book)throw new Error("Không tìm thấy sách.");
-    if(!pdfAvailable)throw new Error("Thiếu thư viện lib/pdf.min.js.");
+    if(!pdfAvailable){
+      throw new Error("Thiếu thư viện lib/pdf.min.js.");
+    }
+
     currentBook=book;
-    currentState={id,displayName:saved?.displayName||null,currentPage:saved?.currentPage||book.currentPage||1,totalPages:saved?.totalPages||book.totalPages||0,readerMode:saved?.readerMode??book.readerMode??false,showReaderImages:saved?.showReaderImages??true,readerFontSize:saved?.readerFontSize||book.readerFontSize||21,scale:saved?.scale||book.scale||1.2,theme:saved?.theme??book.theme??0,bookmarks:normalizeBookmarks(saved?.bookmarks||book.bookmarks)};
-    pdfDocument=await window.pdfjsLib.getDocument({data:await getBookBytes(book)}).promise;
+
+    currentState={
+      id,
+      displayName:saved?.displayName||null,
+      currentPage:saved?.currentPage||book.currentPage||1,
+      totalPages:saved?.totalPages||book.totalPages||0,
+      readerMode:saved?.readerMode??book.readerMode??false,
+      showReaderImages:saved?.showReaderImages??true,
+      readerFontSize:saved?.readerFontSize||book.readerFontSize||21,
+      scale:saved?.scale||book.scale||1.2,
+      theme:saved?.theme??book.theme??0,
+      bookmarks:normalizeBookmarks(saved?.bookmarks||book.bookmarks)
+    };
+
+    pdfDocument=await window.pdfjsLib.getDocument({
+      data:await getBookBytes(book)
+    }).promise;
+
     currentState.totalPages=pdfDocument.numPages;
-    currentState.currentPage=Math.max(1,Math.min(currentState.currentPage,pdfDocument.numPages));
-    currentState.bookmarks=normalizeBookmarks(currentState.bookmarks,pdfDocument.numPages);
-    libraryScreen.classList.add("hidden");readerScreen.classList.remove("hidden","controls-hidden");controlsHidden=false;
-    el("readerBookTitle").textContent=currentState.displayName||book.name;
+
+    currentState.currentPage=Math.max(
+      1,
+      Math.min(currentState.currentPage,pdfDocument.numPages)
+    );
+
+    currentState.bookmarks=normalizeBookmarks(
+      currentState.bookmarks,
+      pdfDocument.numPages
+    );
+
+    libraryScreen.classList.add("hidden");
+    readerScreen.classList.remove("hidden","controls-hidden");
+    controlsHidden=false;
+
+    el("readerBookTitle").textContent=
+      currentState.displayName||book.name;
+
     modeBtn.textContent=currentState.readerMode?"PDF":"Reader";
+
     updateReaderImagesButton();
     applyTheme();
     updateBookmarkButton();
+
     await renderCurrentPage();
     await saveCurrentState();
+
     hideStatus();
   }catch(error){
-    console.error("Lỗi mở sách:",error);showStatus("Không mở được sách:\n"+error.message,10000);
-    if(pdfDocument){try{await pdfDocument.destroy();}catch(_){} }
-    pdfDocument=null;currentBook=null;currentState=null;
-    readerScreen.classList.add("hidden");libraryScreen.classList.remove("hidden");
-  }finally{openingBook=false;}
+    console.error("Lỗi mở sách:",error);
+    showStatus("Không mở được sách:\n"+error.message,10000);
+
+    if(pdfDocument){
+      try{
+        await pdfDocument.destroy();
+      }catch(_){}
+    }
+
+    pdfDocument=null;
+    currentBook=null;
+    currentState=null;
+
+    readerScreen.classList.add("hidden");
+    libraryScreen.classList.remove("hidden");
+  }finally{
+    openingBook=false;
+  }
 }
+
 async function renderCurrentPage(resetScroll=true){
   if(!pdfDocument||rendering)return;
+
   rendering=true;
+
   try{
     if(resetScroll)viewer.scrollTop=0;
-    if(currentState.readerMode)await renderReader();else await renderPDF();
-    el("pageInfo").textContent=currentState.currentPage+" / "+pdfDocument.numPages;
+
+    if(currentState.readerMode){
+      await renderReader();
+    }else{
+      await renderPDF();
+    }
+
+    el("pageInfo").textContent=
+      currentState.currentPage+" / "+pdfDocument.numPages;
+
     updateBookmarkButton();
-  }catch(error){console.error("Lỗi hiển thị trang:",error);showStatus("Không hiển thị được trang:\n"+error.message,7000);}
-  finally{rendering=false;}
+  }catch(error){
+    console.error("Lỗi hiển thị trang:",error);
+    showStatus("Không hiển thị được trang:\n"+error.message,7000);
+  }finally{
+    rendering=false;
+  }
 }
+
 async function renderPDF(){
-  readerView.style.display="none";canvas.style.display="block";
+  readerView.style.display="none";
+  canvas.style.display="block";
+
   const page=await pdfDocument.getPage(currentState.currentPage);
-  let viewport=page.getViewport({scale:currentState.scale});
+
+  let viewport=page.getViewport({
+    scale:currentState.scale
+  });
+
   const area=viewport.width*viewport.height;
-  if(area>3000000){viewport=page.getViewport({scale:currentState.scale*Math.sqrt(3000000/area)});}
-  canvas.width=Math.round(viewport.width);canvas.height=Math.round(viewport.height);
-  await page.render({canvasContext:ctx,viewport}).promise;
+
+  if(area>3000000){
+    viewport=page.getViewport({
+      scale:currentState.scale*
+        Math.sqrt(3000000/area)
+    });
+  }
+
+  canvas.width=Math.round(viewport.width);
+  canvas.height=Math.round(viewport.height);
+
+  await page.render({
+    canvasContext:ctx,
+    viewport
+  }).promise;
 }
-/*
- * v15 – Ảnh trong Reader Mode.
- * Dùng OperatorList của PDF.js 2.16 để định vị các ảnh bitmap trên
- * trang PDF, rồi cắt vùng tương ứng từ ảnh render của trang gốc.
- * Tránh sao chép PDF vào IndexedDB và giới hạn bộ nhớ cho iPhone 6s.
- * Không cam kết tái tạo hoàn hảo hình vector hoặc bố cục phức tạp.
- */
+
+/* Nhận diện vị trí hình ảnh trong trang PDF. */
 function pdfMatrixMultiply(a,b){
   return [
-    a[0]*b[0]+a[2]*b[1],a[1]*b[0]+a[3]*b[1],
-    a[0]*b[2]+a[2]*b[3],a[1]*b[2]+a[3]*b[3],
-    a[0]*b[4]+a[2]*b[5]+a[4],a[1]*b[4]+a[3]*b[5]+a[5]
+    a[0]*b[0]+a[2]*b[1],
+    a[1]*b[0]+a[3]*b[1],
+    a[0]*b[2]+a[2]*b[3],
+    a[1]*b[2]+a[3]*b[3],
+    a[0]*b[4]+a[2]*b[5]+a[4],
+    a[1]*b[4]+a[3]*b[5]+a[5]
   ];
 }
+
 function pdfTransformPoint(matrix,x,y){
-  return [matrix[0]*x+matrix[2]*y+matrix[4],matrix[1]*x+matrix[3]*y+matrix[5]];
+  return [
+    matrix[0]*x+matrix[2]*y+matrix[4],
+    matrix[1]*x+matrix[3]*y+matrix[5]
+  ];
 }
+
 function rectIntersectionArea(a,b){
-  const w=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left));
-  const h=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+  const w=Math.max(
+    0,
+    Math.min(a.right,b.right)-Math.max(a.left,b.left)
+  );
+
+  const h=Math.max(
+    0,
+    Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)
+  );
+
   return w*h;
 }
+
 async function findPageImageRects(page,viewport,hasText){
   const ops=window.pdfjsLib.OPS;
   const list=await page.getOperatorList();
+
   const imageOps=new Set([
-    ops.paintImageXObject,ops.paintJpegXObject,ops.paintInlineImageXObject
+    ops.paintImageXObject,
+    ops.paintJpegXObject,
+    ops.paintInlineImageXObject
   ].filter(x=>typeof x==="number"));
+
   let ctm=[1,0,0,1,0,0];
   const stack=[];
   const found=[];
+
   for(let i=0;i<list.fnArray.length;i++){
-    const fn=list.fnArray[i],args=list.argsArray[i];
-    if(fn===ops.save){stack.push(ctm.slice());continue;}
-    if(fn===ops.restore){if(stack.length)ctm=stack.pop();continue;}
+    const fn=list.fnArray[i];
+    const args=list.argsArray[i];
+
+    if(fn===ops.save){
+      stack.push(ctm.slice());
+      continue;
+    }
+
+    if(fn===ops.restore){
+      if(stack.length)ctm=stack.pop();
+      continue;
+    }
+
     if(fn===ops.paintFormXObjectBegin){
       stack.push(ctm.slice());
-      if(args&&args[0]&&args[0].length===6)ctm=pdfMatrixMultiply(ctm,args[0]);
+      if(args&&args[0]&&args[0].length===6){
+        ctm=pdfMatrixMultiply(ctm,args[0]);
+      }
       continue;
     }
-    if(fn===ops.paintFormXObjectEnd){if(stack.length)ctm=stack.pop();continue;}
+
+    if(fn===ops.paintFormXObjectEnd){
+      if(stack.length)ctm=stack.pop();
+      continue;
+    }
+
     if(fn===ops.transform){
-      if(args&&args.length===6)ctm=pdfMatrixMultiply(ctm,args);
+      if(args&&args.length===6){
+        ctm=pdfMatrixMultiply(ctm,args);
+      }
       continue;
     }
+
     if(!imageOps.has(fn))continue;
 
-    // Hình bitmap được vẽ vào hình vuông chuẩn (0,-1) tới (1,0).
-    const quad=[[0,0],[1,0],[0,-1],[1,-1]].map(([x,y])=>pdfTransformPoint(ctm,x,y));
-    const pdfX=quad.map(p=>p[0]),pdfY=quad.map(p=>p[1]);
-    const device=quad.map(p=>pdfTransformPoint(viewport.transform,p[0],p[1]));
-    let left=Math.max(0,Math.min(...device.map(p=>p[0])));
-    let top=Math.max(0,Math.min(...device.map(p=>p[1])));
-    let right=Math.min(viewport.width,Math.max(...device.map(p=>p[0])));
-    let bottom=Math.min(viewport.height,Math.max(...device.map(p=>p[1])));
-    const width=right-left,height=bottom-top;
-    if(width<35||height<28||width*height<2900)continue;
-    const fraction=(width*height)/(viewport.width*viewport.height);
-    // Trang scan OCR nguyên tờ: không lặp lại toàn bộ chữ đã có.
+    const quad=[
+      [0,0],
+      [1,0],
+      [0,-1],
+      [1,-1]
+    ].map(([x,y])=>pdfTransformPoint(ctm,x,y));
+
+    const pdfY=quad.map(p=>p[1]);
+
+    const device=quad.map(p=>
+      pdfTransformPoint(viewport.transform,p[0],p[1])
+    );
+
+    const left=Math.max(
+      0,
+      Math.min(...device.map(p=>p[0]))
+    );
+
+    const top=Math.max(
+      0,
+      Math.min(...device.map(p=>p[1]))
+    );
+
+    const right=Math.min(
+      viewport.width,
+      Math.max(...device.map(p=>p[0]))
+    );
+
+    const bottom=Math.min(
+      viewport.height,
+      Math.max(...device.map(p=>p[1]))
+    );
+
+    const width=right-left;
+    const height=bottom-top;
+
+    if(width<65||height<48||width*height<4300)continue;
+
+    const fraction=(width*height)/
+      (viewport.width*viewport.height);
+
     if(hasText&&fraction>.78)continue;
-    // Loại bỏ hai phần tử cùng một hình.
-    const rect={left,top,right,bottom,area:width*height,
-      pageY:(Math.max(...pdfY)+Math.min(...pdfY))/2};
+
+    const rect={
+      left,
+      top,
+      right,
+      bottom,
+      area:width*height,
+      pageY:Math.max(...pdfY)
+    };
+
     const duplicate=found.some(other=>{
       const overlap=rectIntersectionArea(rect,other);
       return overlap/Math.min(rect.area,other.area)>.84;
     });
-    if(!duplicate)found.push(rect);
+
+    if(!duplicate){
+      found.push(rect);
+    }
   }
-  // Tối đa 6 hình lớn, để giảm sử dụng RAM trên iPhone 6s.
-  return found.sort((a,b)=>b.area-a.area).slice(0,6).sort((a,b)=>b.pageY-a.pageY);
+
+  return found
+    .sort((a,b)=>b.area-a.area)
+    .slice(0,6)
+    .sort((a,b)=>b.pageY-a.pageY);
 }
+
 async function getReaderFigures(page,hasText){
   let sourceCanvas=null;
+
   try{
     const base=page.getViewport({scale:1});
-    // Giới hạn 1.9 megapixel cho ảnh tạm; bỏ ngay sau khi cắt.
-    const scale=Math.min(1.45,Math.sqrt(1900000/(base.width*base.height)));
+
+    const scale=Math.min(
+      1.45,
+      Math.sqrt(1900000/(base.width*base.height))
+    );
+
     const viewport=page.getViewport({scale});
-    const rectangles=await findPageImageRects(page,viewport,hasText);
+
+    const rectangles=await findPageImageRects(
+      page,viewport,hasText
+    );
+
     if(!rectangles.length)return [];
+
     sourceCanvas=document.createElement("canvas");
     sourceCanvas.width=Math.max(1,Math.floor(viewport.width));
     sourceCanvas.height=Math.max(1,Math.floor(viewport.height));
-    const sourceCtx=sourceCanvas.getContext("2d",{alpha:false});
+
+    const sourceCtx=sourceCanvas.getContext("2d",{
+      alpha:false
+    });
+
     sourceCtx.fillStyle="#ffffff";
-    sourceCtx.fillRect(0,0,sourceCanvas.width,sourceCanvas.height);
-    await page.render({canvasContext:sourceCtx,viewport}).promise;
+    sourceCtx.fillRect(
+      0,0,sourceCanvas.width,sourceCanvas.height
+    );
+
+    await page.render({
+      canvasContext:sourceCtx,
+      viewport
+    }).promise;
+
     const figures=[];
+
     for(const rect of rectangles){
       const x=Math.max(0,Math.floor(rect.left-2));
       const y=Math.max(0,Math.floor(rect.top-2));
-      const w=Math.min(sourceCanvas.width-x,Math.ceil(rect.right+2)-x);
-      const h=Math.min(sourceCanvas.height-y,Math.ceil(rect.bottom+2)-y);
+
+      const w=Math.min(
+        sourceCanvas.width-x,
+        Math.ceil(rect.right+2)-x
+      );
+
+      const h=Math.min(
+        sourceCanvas.height-y,
+        Math.ceil(rect.bottom+2)-y
+      );
+
       if(w<=0||h<=0)continue;
+
       const shrink=Math.min(1,900/w,900/h);
+
       const pic=document.createElement("canvas");
+
       pic.width=Math.max(1,Math.round(w*shrink));
       pic.height=Math.max(1,Math.round(h*shrink));
-      pic.getContext("2d").drawImage(sourceCanvas,x,y,w,h,0,0,pic.width,pic.height);
-      figures.push({y:rect.pageY,src:pic.toDataURL("image/jpeg",.82)});
-      pic.width=0;pic.height=0;
+
+      pic.getContext("2d").drawImage(
+        sourceCanvas,
+        x,y,w,h,
+        0,0,pic.width,pic.height
+      );
+
+      figures.push({
+        y:rect.pageY,
+        src:pic.toDataURL("image/jpeg",.82)
+      });
+
+      pic.width=0;
+      pic.height=0;
     }
+
     return figures;
   }catch(error){
     console.warn("Không thể lấy hình minh họa trang này:",error);
     return [];
   }finally{
-    if(sourceCanvas){sourceCanvas.width=0;sourceCanvas.height=0;}
+    if(sourceCanvas){
+      sourceCanvas.width=0;
+      sourceCanvas.height=0;
+    }
   }
 }
+
 function updateReaderImagesButton(){
   if(!currentState)return;
-  imagesToggle.classList.toggle("hidden",!currentState.readerMode);
+
+  imagesToggle.classList.toggle(
+    "hidden",
+    !currentState.readerMode
+  );
+
   const on=currentState.showReaderImages!==false;
+
   imagesToggle.classList.toggle("isOn",on);
   imagesToggle.textContent=on?"🖼️":"▧";
-  imagesToggle.setAttribute("aria-pressed",on?"true":"false");
-  imagesToggle.setAttribute("aria-label",on?"Tắt ảnh trong Reader":"Bật ảnh trong Reader");
-  imagesToggle.title=on?"Đang giữ ảnh – chạm để tắt":"Ảnh đang tắt – chạm để bật";
+
+  imagesToggle.setAttribute(
+    "aria-pressed",
+    on?"true":"false"
+  );
+
+  imagesToggle.setAttribute(
+    "aria-label",
+    on?"Tắt ảnh trong Reader":"Bật ảnh trong Reader"
+  );
+
+  imagesToggle.title=on
+    ?"Đang giữ ảnh – chạm để tắt"
+    :"Ảnh đang tắt – chạm để bật";
 }
+
 imagesToggle.onclick=async()=>{
   if(!pdfDocument||rendering||!currentState.readerMode)return;
-  currentState.showReaderImages=currentState.showReaderImages===false;
+
+  currentState.showReaderImages=
+    currentState.showReaderImages===false;
+
   updateReaderImagesButton();
+
   await renderCurrentPage(false);
   await saveCurrentState();
 };
 
-async function renderReader(){
-  canvas.style.display="none";readerView.style.display="block";readerView.textContent="Đang xử lý chữ...";
-  const page=await pdfDocument.getPage(currentState.currentPage);
-  const textContent=await page.getTextContent();
-  const rawLines=[];
-  for(const item of textContent.items){
-    if(!item.str||!item.str.trim())continue;
-    const text=cleanVietnameseText(item.str);if(!text)continue;
-    const x=Number(item.transform[4]),y=Number(item.transform[5]);
-    let line=rawLines.find(existing=>Math.abs(existing.y-y)<3.5);
-    if(!line){line={y,items:[]};rawLines.push(line);}
-    line.items.push({x,width:Number(item.width)||0,text});
-  }
-  rawLines.sort((a,b)=>b.y-a.y);
-  const lines=rawLines.map(line=>{
-    line.items.sort((a,b)=>a.x-b.x);
-    const x=line.items[0].x;
-    const right=Math.max(...line.items.map(item=>item.x+item.width));
-    return {x,right,y:line.y,text:normalizeSpacing(line.items.map(item=>item.text).join(" "))};
-  }).filter(line=>line.text);
-  const paragraphs=buildParagraphs(lines);
-  // Hiện chữ trước, không để Reader trống khi trang có ảnh phức tạp.
-  const paragraphHtml=paragraphs.map(paragraph=>{
-    const cls=paragraph.type==="heading"?"readerHeading":paragraph.type==="dialogue"?"readerDialogue":paragraph.type==="bullet"?"readerBullet":"readerParagraph";
-    return {y:paragraph.firstY??paragraph.last.y,html:'<div class="'+cls+'">'+escapeHTML(paragraph.text)+"</div>"};
-  });
-  readerView.innerHTML=paragraphHtml.length?paragraphHtml.map(p=>p.html).join(""):
-    "<p>PDF này không có chữ trích xuất được.</p>";
-  readerView.style.fontSize=currentState.readerFontSize+"px";
-  if(currentState.showReaderImages===false)return;
-  const figures=await getReaderFigures(page,paragraphs.length>8);
-  if(!figures.length)return;
-  const blocks=paragraphHtml.map(item=>({y:item.y,html:item.html}));
-  figures.forEach((fig,i)=>{
-    blocks.push({y:fig.y,html:'<figure class="readerFigure"><img loading="eager" alt="Hình minh họa trong PDF, trang '+currentState.currentPage+'" src="'+fig.src+'"><figcaption>Hình minh họa · Trang '+currentState.currentPage+'</figcaption></figure>'});
-  });
-  blocks.sort((a,b)=>b.y-a.y);
-  readerView.innerHTML=blocks.map(item=>item.html).join("");
+/* Chèn ảnh giữa các đoạn văn theo thứ tự trang gốc. */
+function paragraphToHtml(paragraph){
+  const cls=paragraph.type==="heading"
+    ?"readerHeading"
+    :paragraph.type==="dialogue"
+      ?"readerDialogue"
+      :paragraph.type==="bullet"
+        ?"readerBullet"
+        :"readerParagraph";
+
+  return '<div class="'+cls+'">'+
+    escapeHTML(paragraph.text)+"</div>";
 }
+
+function composeReaderHtml(lines,figures,pageNumber){
+  const events=lines.map(line=>({
+    kind:"text",
+    y:line.y,
+    line
+  }));
+
+  figures.forEach(fig=>{
+    events.push({
+      kind:"image",
+      y:fig.y,
+      src:fig.src
+    });
+  });
+
+  events.sort((a,b)=>
+    b.y-a.y||(a.kind==="image"?-1:1)
+  );
+
+  let buffer=[];
+  let out="";
+
+  function flush(){
+    if(buffer.length){
+      out+=buildParagraphs(buffer)
+        .map(paragraphToHtml).join("");
+
+      buffer=[];
+    }
+  }
+
+  for(const event of events){
+    if(event.kind==="text"){
+      buffer.push(event.line);
+      continue;
+    }
+
+    flush();
+
+    out+='<figure class="readerFigure">'+
+      '<img loading="eager" '+
+      'alt="Hình minh họa trong PDF, trang '+
+      pageNumber+'" src="'+event.src+'">'+
+      '<figcaption>Hình minh họa · Trang '+
+      pageNumber+'</figcaption></figure>';
+  }
+
+  flush();
+
+  return out||
+    "<p>PDF này không có chữ hoặc ảnh trích xuất được.</p>";
+}
+
+async function renderReader(){
+  canvas.style.display="none";
+  readerView.style.display="block";
+  readerView.textContent="Đang xử lý chữ...";
+
+  const page=await pdfDocument.getPage(
+    currentState.currentPage
+  );
+
+  const textContent=await page.getTextContent();
+  const lines=extractReaderLines(textContent);
+
+  readerView.style.fontSize=
+    currentState.readerFontSize+"px";
+
+  readerView.innerHTML=composeReaderHtml(
+    lines,[],currentState.currentPage
+  );
+
+  if(currentState.showReaderImages===false)return;
+
+  const figures=await getReaderFigures(
+    page,
+    lines.length>8
+  );
+
+  if(figures.length){
+    readerView.innerHTML=composeReaderHtml(
+      lines,figures,currentState.currentPage
+    );
+  }
+}
+
 async function goToPage(pageNumber){
   if(!pdfDocument||rendering)return;
+
   const next=Number(pageNumber);
-  if(!Number.isInteger(next)||next<1||next>pdfDocument.numPages){showStatus("Số trang không hợp lệ.",3000);return;}
+
+  if(!Number.isInteger(next)||next<1||
+    next>pdfDocument.numPages){
+    showStatus("Số trang không hợp lệ.",3000);
+    return;
+  }
+
   if(next===currentState.currentPage)return;
+
   currentState.currentPage=next;
-  await renderCurrentPage();await saveCurrentState();
+
+  await renderCurrentPage();
+  await saveCurrentState();
 }
-function changePage(direction){if(!currentState)return;return goToPage(currentState.currentPage+direction);}
+
+function changePage(direction){
+  if(!currentState)return;
+
+  return goToPage(
+    currentState.currentPage+direction
+  );
+}
+
 el("prevBtn").onclick=()=>changePage(-1);
 el("nextBtn").onclick=()=>changePage(1);
 
-/* Bấm chỉ số trang để hiện thanh kéo + ô nhập trang. */
 function openPageDialog(){
   if(!pdfDocument||rendering)return;
-  const max=pdfDocument.numPages,current=currentState.currentPage;
-  el("pageRange").min=1;el("pageRange").max=max;el("pageRange").value=current;
-  el("pageNumber").min=1;el("pageNumber").max=max;el("pageNumber").value=current;
+
+  const max=pdfDocument.numPages;
+  const current=currentState.currentPage;
+
+  el("pageRange").min=1;
+  el("pageRange").max=max;
+  el("pageRange").value=current;
+
+  el("pageNumber").min=1;
+  el("pageNumber").max=max;
+  el("pageNumber").value=current;
+
   el("pageTotal").textContent="/ "+max;
-  el("pageRangeInfo").textContent="Trang "+current+" / "+max;
+  el("pageRangeInfo").textContent=
+    "Trang "+current+" / "+max;
+
   el("pageDialog").classList.remove("hidden");
 }
-function closePageDialog(){el("pageDialog").classList.add("hidden");el("pageNumber").blur();}
-function updatePageSelection(value){
-  el("pageRangeInfo").textContent="Trang "+value+" / "+pdfDocument.numPages;
+
+function closePageDialog(){
+  el("pageDialog").classList.add("hidden");
+  el("pageNumber").blur();
 }
+
+function updatePageSelection(value){
+  el("pageRangeInfo").textContent=
+    "Trang "+value+" / "+pdfDocument.numPages;
+}
+
 el("pageInfo").onclick=openPageDialog;
 el("cancelJump").onclick=closePageDialog;
-el("pageRange").addEventListener("input",event=>{const value=Number(event.target.value);el("pageNumber").value=value;updatePageSelection(value);});
+
+el("pageRange").addEventListener("input",event=>{
+  const value=Number(event.target.value);
+  el("pageNumber").value=value;
+  updatePageSelection(value);
+});
+
 el("pageNumber").addEventListener("input",event=>{
   if(!pdfDocument)return;
+
   const value=Number(event.target.value);
-  if(Number.isInteger(value)&&value>=1&&value<=pdfDocument.numPages){el("pageRange").value=value;updatePageSelection(value);}
+
+  if(Number.isInteger(value)&&value>=1&&
+    value<=pdfDocument.numPages){
+    el("pageRange").value=value;
+    updatePageSelection(value);
+  }
 });
+
 async function confirmPageJump(){
   if(!pdfDocument)return;
-  const value=Number(el("pageNumber").value);
-  if(!Number.isInteger(value)||value<1||value>pdfDocument.numPages){showStatus("Vui lòng nhập trang từ 1 đến "+pdfDocument.numPages,3500);return;}
-  closePageDialog();await goToPage(value);
-}
-el("confirmJump").onclick=confirmPageJump;
-el("pageNumber").addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();confirmPageJump();}});
-el("pageDialog").addEventListener("click",event=>{if(event.target===el("pageDialog"))closePageDialog();});
 
-/* =========================
-   BƯỚC 5B – BOOKMARK / DẤU TRANG
-   Không tạo object store mới nên giữ DB_VERSION=2.
-========================= */
+  const value=Number(el("pageNumber").value);
+
+  if(!Number.isInteger(value)||value<1||
+    value>pdfDocument.numPages){
+    showStatus(
+      "Vui lòng nhập trang từ 1 đến "+
+      pdfDocument.numPages,
+      3500
+    );
+    return;
+  }
+
+  closePageDialog();
+  await goToPage(value);
+}
+
+el("confirmJump").onclick=confirmPageJump;
+
+el("pageNumber").addEventListener("keydown",event=>{
+  if(event.key==="Enter"){
+    event.preventDefault();
+    confirmPageJump();
+  }
+});
+
+el("pageDialog").addEventListener("click",event=>{
+  if(event.target===el("pageDialog")){
+    closePageDialog();
+  }
+});
+
 function updateBookmarkButton(){
   if(!currentState)return;
-  const marked=currentState.bookmarks.includes(currentState.currentPage);
+
+  const marked=currentState.bookmarks.includes(
+    currentState.currentPage
+  );
+
   const btn=el("bookmarkToggle");
+
   btn.textContent=marked?"★":"☆";
   btn.classList.toggle("isBookmarked",marked);
-  btn.setAttribute("aria-pressed",marked?"true":"false");
-  btn.setAttribute("aria-label",marked?"Bỏ dấu trang hiện tại":"Đánh dấu trang hiện tại");
-  el("openBookmarks").setAttribute("aria-label","Danh sách "+currentState.bookmarks.length+" dấu trang");
+
+  btn.setAttribute(
+    "aria-pressed",
+    marked?"true":"false"
+  );
+
+  btn.setAttribute(
+    "aria-label",
+    marked?"Bỏ dấu trang hiện tại":
+      "Đánh dấu trang hiện tại"
+  );
+
+  el("openBookmarks").setAttribute(
+    "aria-label",
+    "Danh sách "+currentState.bookmarks.length+" dấu trang"
+  );
 }
+
 async function toggleCurrentBookmark(){
-  if(!pdfDocument||!currentState||rendering||openingBook)return;
+  if(!pdfDocument||!currentState||
+    rendering||openingBook)return;
+
   const page=currentState.currentPage;
+
   const wasMarked=currentState.bookmarks.includes(page);
+
   currentState.bookmarks=wasMarked
-    ? currentState.bookmarks.filter(value=>value!==page)
-    : normalizeBookmarks([...currentState.bookmarks,page],pdfDocument.numPages);
+    ?currentState.bookmarks.filter(value=>value!==page)
+    :normalizeBookmarks(
+      [...currentState.bookmarks,page],
+      pdfDocument.numPages
+    );
+
   updateBookmarkButton();
   await saveCurrentState();
-  showStatus(wasMarked?"Đã bỏ dấu trang ở trang "+page:"Đã đánh dấu trang "+page,1900);
+
+  showStatus(
+    wasMarked
+      ?"Đã bỏ dấu trang ở trang "+page
+      :"Đã đánh dấu trang "+page,
+    1900
+  );
 }
+
 function refreshBookmarksList(){
   const list=el("bookmarksList");
   list.innerHTML="";
+
   if(!currentState)return;
-  const pages=normalizeBookmarks(currentState.bookmarks,pdfDocument.numPages);
-  el("bookmarksSummary").textContent=pages.length+" trang đã đánh dấu";
+
+  const pages=normalizeBookmarks(
+    currentState.bookmarks,
+    pdfDocument.numPages
+  );
+
+  el("bookmarksSummary").textContent=
+    pages.length+" trang đã đánh dấu";
+
   if(!pages.length){
     const empty=document.createElement("div");
     empty.className="bookmarksEmpty";
-    empty.textContent="Chưa có dấu trang. Nhấn ☆ trên thanh tiêu đề khi muốn lưu một trang.";
+    empty.textContent=
+      "Chưa có dấu trang. Nhấn ☆ trên thanh tiêu đề khi muốn lưu một trang.";
+
     list.appendChild(empty);
     return;
   }
+
   for(const page of pages){
     const row=document.createElement("div");
     row.className="bookmarkRow";
+
     const go=document.createElement("button");
     go.className="bookmarkGo";
     go.type="button";
-    go.textContent="📖 Trang "+page+(page===currentState.currentPage?" · Đang đọc":"");
+
+    go.textContent=
+      "📖 Trang "+page+
+      (page===currentState.currentPage?" · Đang đọc":"");
+
     go.onclick=async()=>{
       closeBookmarksDialog();
       await goToPage(page);
     };
+
     const remove=document.createElement("button");
     remove.className="bookmarkDelete";
     remove.type="button";
     remove.textContent="✕";
-    remove.setAttribute("aria-label","Xóa dấu trang "+page);
+
+    remove.setAttribute(
+      "aria-label",
+      "Xóa dấu trang "+page
+    );
+
     remove.onclick=async()=>{
       if(!currentState)return;
-      currentState.bookmarks=currentState.bookmarks.filter(item=>item!==page);
+
+      currentState.bookmarks=
+        currentState.bookmarks.filter(item=>item!==page);
+
       updateBookmarkButton();
       refreshBookmarksList();
       await saveCurrentState();
     };
+
     row.appendChild(go);
     row.appendChild(remove);
     list.appendChild(row);
   }
 }
+
 function openBookmarksDialog(){
   if(!pdfDocument||!currentState||rendering)return;
+
   refreshBookmarksList();
   el("bookmarksDialog").classList.remove("hidden");
 }
-function closeBookmarksDialog(){el("bookmarksDialog").classList.add("hidden");}
+
+function closeBookmarksDialog(){
+  el("bookmarksDialog").classList.add("hidden");
+}
+
 el("bookmarkToggle").onclick=toggleCurrentBookmark;
 el("openBookmarks").onclick=openBookmarksDialog;
 el("closeBookmarks").onclick=closeBookmarksDialog;
+
 el("bookmarksDialog").addEventListener("click",event=>{
-  if(event.target===el("bookmarksDialog"))closeBookmarksDialog();
+  if(event.target===el("bookmarksDialog")){
+    closeBookmarksDialog();
+  }
 });
 
 async function changeSize(direction){
   if(!pdfDocument||rendering)return;
+
   if(currentState.readerMode){
-    currentState.readerFontSize=Math.max(14,Math.min(40,currentState.readerFontSize+direction*2));
-    readerView.style.fontSize=currentState.readerFontSize+"px";
+    currentState.readerFontSize=Math.max(
+      14,
+      Math.min(
+        40,
+        currentState.readerFontSize+direction*2
+      )
+    );
+
+    readerView.style.fontSize=
+      currentState.readerFontSize+"px";
   }else{
-    currentState.scale=Math.max(.5,Math.min(3,currentState.scale+direction*.15));
+    currentState.scale=Math.max(
+      .5,
+      Math.min(
+        3,
+        currentState.scale+direction*.15
+      )
+    );
+
     await renderCurrentPage(false);
   }
+
   await saveCurrentState();
 }
+
 el("zoomOut").onclick=()=>changeSize(-1);
 el("zoomIn").onclick=()=>changeSize(1);
+
 modeBtn.onclick=async()=>{
   if(!pdfDocument||rendering)return;
+
   currentState.readerMode=!currentState.readerMode;
-  modeBtn.textContent=currentState.readerMode?"PDF":"Reader";
+
+  modeBtn.textContent=
+    currentState.readerMode?"PDF":"Reader";
+
   updateReaderImagesButton();
-  await renderCurrentPage();await saveCurrentState();
+
+  await renderCurrentPage();
+  await saveCurrentState();
 };
+
 function applyTheme(){
   readerScreen.classList.remove("night","sepia");
-  if(currentState.theme===1){readerScreen.classList.add("sepia");themeBtn.textContent="📜";}
-  else if(currentState.theme===2){readerScreen.classList.add("night");themeBtn.textContent="🌙";}
-  else{themeBtn.textContent="☀";}
-}
-themeBtn.onclick=async()=>{if(!currentState)return;currentState.theme=(currentState.theme+1)%3;applyTheme();await saveCurrentState();};
-function toggleControls(){controlsHidden=!controlsHidden;readerScreen.classList.toggle("controls-hidden",controlsHidden);}
-viewer.addEventListener("touchstart",event=>{
-  if(event.touches.length!==1){touchStart=null;return;}
-  const touch=event.touches[0];touchStart={x:touch.clientX,y:touch.clientY,time:Date.now()};
-},{passive:true});
-viewer.addEventListener("touchmove",event=>{if(event.touches.length!==1)touchStart=null;},{passive:true});
-viewer.addEventListener("touchcancel",()=>{touchStart=null;},{passive:true});
-viewer.addEventListener("touchend",event=>{
-  if(!pdfDocument||!touchStart||event.changedTouches.length!==1)return;
-  const touch=event.changedTouches[0];
-  const dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
-  const ax=Math.abs(dx),ay=Math.abs(dy),duration=Date.now()-touchStart.time;
-  touchStart=null;
-  if(ax>=60&&ax>ay*1.25&&duration<1000){changePage(dx<0?1:-1);return;}
-  const height=window.innerHeight;
-  if(ax<12&&ay<12&&duration<450&&touch.clientY>height*.25&&touch.clientY<height*.75)toggleControls();
-},{passive:true});
-viewer.addEventListener("click",event=>{
-  if("ontouchstart" in window)return;
-  const height=window.innerHeight;
-  if(event.clientY>height*.25&&event.clientY<height*.75)toggleControls();
-});
-async function closeCurrentBook(){
-  if(rendering||openingBook)return;
-  closePageDialog();closeBookmarksDialog();await saveCurrentState();
-  if(pdfDocument){try{await pdfDocument.destroy();}catch(error){console.warn(error);}}
-  pdfDocument=null;currentBook=null;currentState=null;
-  canvas.width=0;canvas.height=0;readerView.innerHTML="";readerView.style.display="none";canvas.style.display="none";
-  readerScreen.classList.add("hidden");readerScreen.classList.remove("controls-hidden");
-  imagesToggle.classList.add("hidden");
-  libraryScreen.classList.remove("hidden");controlsHidden=false;
-  await renderLibrary();
-}
-el("backBtn").onclick=closeCurrentBook;
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&currentBook)saveCurrentState();});
-async function startApp(){
-  try{
-    await openDatabase();await renderLibrary();
-    el("health").textContent=pdfAvailable?"Linh Reader v15 · Bộ nhớ OK · PDF.js OK":"Linh Reader v15 · THIẾU PDF.JS";
-    if(!pdfAvailable)showStatus("Thiếu thư viện PDF.js.\nKiểm tra thư mục lib.",9000);
-  }catch(error){
-    console.error("Lỗi khởi động:",error);
-    el("health").textContent="Linh Reader v15 · LỖI BỘ NHỚ";
-    showStatus("Không mở được IndexedDB:\n"+error.message,12000);
+
+  if(currentState.theme===1){
+    readerScreen.classList.add("sepia");
+    themeBtn.textContent="📜";
+  }else if(currentState.theme===2){
+    readerScreen.classList.add("night");
+    themeBtn.textContent="🌙";
+  }else{
+    themeBtn.textContent="☀";
   }
 }
+
+themeBtn.onclick=async()=>{
+  if(!currentState)return;
+
+  currentState.theme=(currentState.theme+1)%3;
+
+  applyTheme();
+  await saveCurrentState();
+};
+
+function toggleControls(){
+  controlsHidden=!controlsHidden;
+
+  readerScreen.classList.toggle(
+    "controls-hidden",
+    controlsHidden
+  );
+}
+
+viewer.addEventListener("touchstart",event=>{
+  if(event.touches.length!==1){
+    touchStart=null;
+    return;
+  }
+
+  const touch=event.touches[0];
+
+  touchStart={
+    x:touch.clientX,
+    y:touch.clientY,
+    time:Date.now()
+  };
+},{passive:true});
+
+viewer.addEventListener("touchmove",event=>{
+  if(event.touches.length!==1){
+    touchStart=null;
+  }
+},{passive:true});
+
+viewer.addEventListener("touchcancel",()=>{
+  touchStart=null;
+},{passive:true});
+
+viewer.addEventListener("touchend",event=>{
+  if(!pdfDocument||!touchStart||
+    event.changedTouches.length!==1)return;
+
+  const touch=event.changedTouches[0];
+
+  const dx=touch.clientX-touchStart.x;
+  const dy=touch.clientY-touchStart.y;
+
+  const ax=Math.abs(dx);
+  const ay=Math.abs(dy);
+  const duration=Date.now()-touchStart.time;
+
+  touchStart=null;
+
+  if(ax>=60&&ax>ay*1.25&&duration<1000){
+    changePage(dx<0?1:-1);
+    return;
+  }
+
+  const height=window.innerHeight;
+
+  if(ax<12&&ay<12&&duration<450&&
+    touch.clientY>height*.25&&
+    touch.clientY<height*.75){
+    toggleControls();
+  }
+},{passive:true});
+
+viewer.addEventListener("click",event=>{
+  if("ontouchstart" in window)return;
+
+  const height=window.innerHeight;
+
+  if(event.clientY>height*.25&&
+    event.clientY<height*.75){
+    toggleControls();
+  }
+});
+
+async function closeCurrentBook(){
+  if(rendering||openingBook)return;
+
+  closePageDialog();
+  closeBookmarksDialog();
+  await saveCurrentState();
+
+  if(pdfDocument){
+    try{
+      await pdfDocument.destroy();
+    }catch(error){
+      console.warn(error);
+    }
+  }
+
+  pdfDocument=null;
+  currentBook=null;
+  currentState=null;
+
+  canvas.width=0;
+  canvas.height=0;
+
+  readerView.innerHTML="";
+  readerView.style.display="none";
+  canvas.style.display="none";
+
+  readerScreen.classList.add("hidden");
+  readerScreen.classList.remove("controls-hidden");
+
+  imagesToggle.classList.add("hidden");
+
+  libraryScreen.classList.remove("hidden");
+  controlsHidden=false;
+
+  await renderLibrary();
+}
+
+el("backBtn").onclick=closeCurrentBook;
+
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden&&currentBook){
+    saveCurrentState();
+  }
+});
+
+async function startApp(){
+  try{
+    await openDatabase();
+    await renderLibrary();
+
+    el("health").textContent=pdfAvailable
+      ?"Linh Reader v16 · Bộ nhớ OK · PDF.js OK"
+      :"Linh Reader v16 · THIẾU PDF.JS";
+
+    if(!pdfAvailable){
+      showStatus(
+        "Thiếu thư viện PDF.js.\nKiểm tra thư mục lib.",
+        9000
+      );
+    }
+  }catch(error){
+    console.error("Lỗi khởi động:",error);
+
+    el("health").textContent=
+      "Linh Reader v16 · LỖI BỘ NHỚ";
+
+    showStatus(
+      "Không mở được IndexedDB:\n"+error.message,
+      12000
+    );
+  }
+}
+
 startApp();
 </script>
+
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .catch(console.error);
   });
 }
 </script>
+
 </body>
 </html>
