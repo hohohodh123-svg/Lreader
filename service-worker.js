@@ -1,5 +1,4 @@
-const CACHE_NAME = "linh-reader-v13";
-
+const CACHE_NAME = "linh-reader-v14";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -21,10 +20,7 @@ self.addEventListener("activate", event => {
     caches.keys()
       .then(names => Promise.all(
         names
-          .filter(name =>
-            name.startsWith("linh-reader-") &&
-            name !== CACHE_NAME
-          )
+          .filter(name => name.startsWith("linh-reader-") && name !== CACHE_NAME)
           .map(name => caches.delete(name))
       ))
       .then(() => self.clients.claim())
@@ -33,9 +29,7 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-
   const url = new URL(event.request.url);
-
   if (url.origin !== self.location.origin) return;
 
   event.respondWith(
@@ -43,27 +37,17 @@ self.addEventListener("fetch", event => {
       .then(response => {
         if (response.ok) {
           const copy = response.clone();
-
           event.waitUntil(
             caches.open(CACHE_NAME)
               .then(cache => cache.put(event.request, copy))
           );
         }
-
         return response;
       })
       .catch(async () => {
-        const cached = await caches.match(
-          event.request,
-          { ignoreSearch: true }
-        );
-
+        const cached = await caches.match(event.request, {ignoreSearch:true});
         if (cached) return cached;
-
-        if (event.request.mode === "navigate") {
-          return caches.match("./index.html");
-        }
-
+        if (event.request.mode === "navigate") return caches.match("./index.html");
         return Response.error();
       })
   );

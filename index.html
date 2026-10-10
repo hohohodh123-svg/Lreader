@@ -72,6 +72,17 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
 #pageRange{width:100%;height:35px;accent-color:#8b7556}
 .pageNumberRow{display:flex;align-items:center;justify-content:center;gap:10px;margin:15px 0 20px}
 #pageNumber{width:100px;height:43px;border:1px solid #bbb;border-radius:9px;background:white;font-size:18px;text-align:center;color:#222}
+/* BOOKMARK v14: gọn trên màn hình iPhone 6s. */
+.bookmarkTool{min-width:36px;min-height:39px;padding:5px 6px;font-size:20px;background:transparent;border:1px solid #cfc3b2;flex-shrink:0}
+#bookmarkToggle.isBookmarked{color:#a5792b;background:#fff3d2}
+.night .bookmarkTool{border-color:#666}
+#bookmarksDialog .modalPanel{max-height:82vh;display:flex;flex-direction:column}
+#bookmarksSummary{font-size:13px;color:#6c6256;margin:0 0 11px;text-align:center}
+#bookmarksList{min-height:58px;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px}
+.bookmarkRow{display:flex;align-items:center;gap:8px;background:#f3e9d9;border-radius:10px;padding:7px}
+.bookmarkGo{flex:1;min-width:0;text-align:left;background:transparent;font-size:15px;padding:10px 8px}
+.bookmarkDelete{width:42px;flex-shrink:0;background:#e6d9c7;padding:10px 0}
+.bookmarksEmpty{text-align:center;line-height:1.6;color:#736b5f;padding:18px 5px}
 .dialogActions{display:flex;gap:10px;margin-top:18px}
 .dialogActions button{flex:1;padding:12px}.primaryDialogBtn{background:#9a8466;color:#fff}
 @media(max-width:420px){#bookList{grid-template-columns:repeat(2,minmax(0,1fr))}.libraryHeader h1{font-size:18px}}
@@ -114,6 +125,8 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
   <div class="readerHeader">
     <button id="backBtn" aria-label="Về tủ sách">‹</button>
     <div id="readerBookTitle"></div>
+    <button id="bookmarkToggle" class="bookmarkTool" type="button" aria-label="Đánh dấu trang hiện tại" aria-pressed="false" title="Đánh dấu trang">☆</button>
+    <button id="openBookmarks" class="bookmarkTool" type="button" aria-label="Danh sách dấu trang" title="Danh sách dấu trang">📑</button>
   </div>
   <div id="viewer">
     <canvas id="pdfCanvas"></canvas>
@@ -155,6 +168,17 @@ button:active{opacity:.7}button:disabled{opacity:.5}.hidden{display:none!importa
     <div class="dialogActions">
       <button id="cancelJump" type="button">Hủy</button>
       <button id="confirmJump" class="primaryDialogBtn" type="button">Đi tới</button>
+    </div>
+  </div>
+</div>
+<!-- Bước 5B: danh sách dấu trang theo từng cuốn sách -->
+<div id="bookmarksDialog" class="modalLayer hidden" role="dialog" aria-modal="true" aria-labelledby="bookmarksTitle">
+  <div class="modalPanel">
+    <h2 id="bookmarksTitle">📑 Dấu trang</h2>
+    <p id="bookmarksSummary">0 trang đã đánh dấu</p>
+    <div id="bookmarksList"></div>
+    <div class="dialogActions">
+      <button id="closeBookmarks" class="primaryDialogBtn" type="button">Đóng</button>
     </div>
   </div>
 </div>
@@ -355,6 +379,7 @@ async function renderLibrary(){
     const page=state.currentPage||1;
     const total=state.totalPages||book.totalPages||0;
     const progress=total?Math.min(100,Math.round(page/total*100)):0;
+    const bookmarkCount=normalizeBookmarks(state.bookmarks).length;
     const card=document.createElement("div");
     card.className="bookCard";
     card.dataset.search=normalizeSearch(displayName+" "+originalName);
@@ -362,7 +387,7 @@ async function renderLibrary(){
       <div>
         <div class="bookCover">📕</div>
         <div class="bookTitle">${escapeHTML(displayName)}</div>
-        <div class="bookMeta">${total?`Trang ${page} / ${total}`:"Chưa mở sách"}<br>${formatSize(book.size||0)}${total?` · ${progress}%`:""}</div>
+        <div class="bookMeta">${total?`Trang ${page} / ${total}`:"Chưa mở sách"}<br>${formatSize(book.size||0)}${total?` · ${progress}%`:""}${bookmarkCount?`<br>🔖 ${bookmarkCount} dấu trang`:""}</div>
         <div class="progressTrack"><div class="progressBar" style="width:${progress}%"></div></div>
       </div>
       <div class="bookActions">
@@ -464,8 +489,13 @@ function buildParagraphs(lines){
   return result;
 }
 
+/* Dấu trang chỉ lưu số trang trong bookState; không sửa dữ liệu PDF. */
+function normalizeBookmarks(values,maxPage=Infinity){
+  if(!Array.isArray(values))return [];
+  return [...new Set(values.map(Number).filter(page=>Number.isInteger(page)&&page>=1&&page<=maxPage))].sort((a,b)=>a-b);
+}
 function makeCurrentState(){
-  return {id:currentBook.id,displayName:currentState.displayName||null,currentPage:currentState.currentPage,totalPages:currentState.totalPages,readerMode:currentState.readerMode,readerFontSize:currentState.readerFontSize,scale:currentState.scale,theme:currentState.theme,lastOpenedAt:Date.now()};
+  return {id:currentBook.id,displayName:currentState.displayName||null,currentPage:currentState.currentPage,totalPages:currentState.totalPages,readerMode:currentState.readerMode,readerFontSize:currentState.readerFontSize,scale:currentState.scale,theme:currentState.theme,bookmarks:normalizeBookmarks(currentState.bookmarks),lastOpenedAt:Date.now()};
 }
 async function saveCurrentState(){
   if(!currentBook||!currentState)return;
@@ -481,14 +511,16 @@ async function openStoredBook(id){
     if(!book)throw new Error("Không tìm thấy sách.");
     if(!pdfAvailable)throw new Error("Thiếu thư viện lib/pdf.min.js.");
     currentBook=book;
-    currentState={id,displayName:saved?.displayName||null,currentPage:saved?.currentPage||book.currentPage||1,totalPages:saved?.totalPages||book.totalPages||0,readerMode:saved?.readerMode??book.readerMode??false,readerFontSize:saved?.readerFontSize||book.readerFontSize||21,scale:saved?.scale||book.scale||1.2,theme:saved?.theme??book.theme??0};
+    currentState={id,displayName:saved?.displayName||null,currentPage:saved?.currentPage||book.currentPage||1,totalPages:saved?.totalPages||book.totalPages||0,readerMode:saved?.readerMode??book.readerMode??false,readerFontSize:saved?.readerFontSize||book.readerFontSize||21,scale:saved?.scale||book.scale||1.2,theme:saved?.theme??book.theme??0,bookmarks:normalizeBookmarks(saved?.bookmarks||book.bookmarks)};
     pdfDocument=await window.pdfjsLib.getDocument({data:await getBookBytes(book)}).promise;
     currentState.totalPages=pdfDocument.numPages;
     currentState.currentPage=Math.max(1,Math.min(currentState.currentPage,pdfDocument.numPages));
+    currentState.bookmarks=normalizeBookmarks(currentState.bookmarks,pdfDocument.numPages);
     libraryScreen.classList.add("hidden");readerScreen.classList.remove("hidden","controls-hidden");controlsHidden=false;
     el("readerBookTitle").textContent=currentState.displayName||book.name;
     modeBtn.textContent=currentState.readerMode?"PDF":"Reader";
     applyTheme();
+    updateBookmarkButton();
     await renderCurrentPage();
     await saveCurrentState();
     hideStatus();
@@ -506,6 +538,7 @@ async function renderCurrentPage(resetScroll=true){
     if(resetScroll)viewer.scrollTop=0;
     if(currentState.readerMode)await renderReader();else await renderPDF();
     el("pageInfo").textContent=currentState.currentPage+" / "+pdfDocument.numPages;
+    updateBookmarkButton();
   }catch(error){console.error("Lỗi hiển thị trang:",error);showStatus("Không hiển thị được trang:\n"+error.message,7000);}
   finally{rendering=false;}
 }
@@ -589,6 +622,85 @@ el("confirmJump").onclick=confirmPageJump;
 el("pageNumber").addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();confirmPageJump();}});
 el("pageDialog").addEventListener("click",event=>{if(event.target===el("pageDialog"))closePageDialog();});
 
+/* =========================
+   BƯỚC 5B – BOOKMARK / DẤU TRANG
+   Không tạo object store mới nên giữ DB_VERSION=2.
+========================= */
+function updateBookmarkButton(){
+  if(!currentState)return;
+  const marked=currentState.bookmarks.includes(currentState.currentPage);
+  const btn=el("bookmarkToggle");
+  btn.textContent=marked?"★":"☆";
+  btn.classList.toggle("isBookmarked",marked);
+  btn.setAttribute("aria-pressed",marked?"true":"false");
+  btn.setAttribute("aria-label",marked?"Bỏ dấu trang hiện tại":"Đánh dấu trang hiện tại");
+  el("openBookmarks").setAttribute("aria-label","Danh sách "+currentState.bookmarks.length+" dấu trang");
+}
+async function toggleCurrentBookmark(){
+  if(!pdfDocument||!currentState||rendering||openingBook)return;
+  const page=currentState.currentPage;
+  const wasMarked=currentState.bookmarks.includes(page);
+  currentState.bookmarks=wasMarked
+    ? currentState.bookmarks.filter(value=>value!==page)
+    : normalizeBookmarks([...currentState.bookmarks,page],pdfDocument.numPages);
+  updateBookmarkButton();
+  await saveCurrentState();
+  showStatus(wasMarked?"Đã bỏ dấu trang ở trang "+page:"Đã đánh dấu trang "+page,1900);
+}
+function refreshBookmarksList(){
+  const list=el("bookmarksList");
+  list.innerHTML="";
+  if(!currentState)return;
+  const pages=normalizeBookmarks(currentState.bookmarks,pdfDocument.numPages);
+  el("bookmarksSummary").textContent=pages.length+" trang đã đánh dấu";
+  if(!pages.length){
+    const empty=document.createElement("div");
+    empty.className="bookmarksEmpty";
+    empty.textContent="Chưa có dấu trang. Nhấn ☆ trên thanh tiêu đề khi muốn lưu một trang.";
+    list.appendChild(empty);
+    return;
+  }
+  for(const page of pages){
+    const row=document.createElement("div");
+    row.className="bookmarkRow";
+    const go=document.createElement("button");
+    go.className="bookmarkGo";
+    go.type="button";
+    go.textContent="📖 Trang "+page+(page===currentState.currentPage?" · Đang đọc":"");
+    go.onclick=async()=>{
+      closeBookmarksDialog();
+      await goToPage(page);
+    };
+    const remove=document.createElement("button");
+    remove.className="bookmarkDelete";
+    remove.type="button";
+    remove.textContent="✕";
+    remove.setAttribute("aria-label","Xóa dấu trang "+page);
+    remove.onclick=async()=>{
+      if(!currentState)return;
+      currentState.bookmarks=currentState.bookmarks.filter(item=>item!==page);
+      updateBookmarkButton();
+      refreshBookmarksList();
+      await saveCurrentState();
+    };
+    row.appendChild(go);
+    row.appendChild(remove);
+    list.appendChild(row);
+  }
+}
+function openBookmarksDialog(){
+  if(!pdfDocument||!currentState||rendering)return;
+  refreshBookmarksList();
+  el("bookmarksDialog").classList.remove("hidden");
+}
+function closeBookmarksDialog(){el("bookmarksDialog").classList.add("hidden");}
+el("bookmarkToggle").onclick=toggleCurrentBookmark;
+el("openBookmarks").onclick=openBookmarksDialog;
+el("closeBookmarks").onclick=closeBookmarksDialog;
+el("bookmarksDialog").addEventListener("click",event=>{
+  if(event.target===el("bookmarksDialog"))closeBookmarksDialog();
+});
+
 async function changeSize(direction){
   if(!pdfDocument||rendering)return;
   if(currentState.readerMode){
@@ -639,7 +751,7 @@ viewer.addEventListener("click",event=>{
 });
 async function closeCurrentBook(){
   if(rendering||openingBook)return;
-  closePageDialog();await saveCurrentState();
+  closePageDialog();closeBookmarksDialog();await saveCurrentState();
   if(pdfDocument){try{await pdfDocument.destroy();}catch(error){console.warn(error);}}
   pdfDocument=null;currentBook=null;currentState=null;
   canvas.width=0;canvas.height=0;readerView.innerHTML="";readerView.style.display="none";canvas.style.display="none";
@@ -652,11 +764,11 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden&&currentBoo
 async function startApp(){
   try{
     await openDatabase();await renderLibrary();
-    el("health").textContent=pdfAvailable?"Linh Reader v13 · Bộ nhớ OK · PDF.js OK":"Linh Reader v13 · THIẾU PDF.JS";
+    el("health").textContent=pdfAvailable?"Linh Reader v14 · Bộ nhớ OK · PDF.js OK":"Linh Reader v14 · THIẾU PDF.JS";
     if(!pdfAvailable)showStatus("Thiếu thư viện PDF.js.\nKiểm tra thư mục lib.",9000);
   }catch(error){
     console.error("Lỗi khởi động:",error);
-    el("health").textContent="Linh Reader v13 · LỖI BỘ NHỚ";
+    el("health").textContent="Linh Reader v14 · LỖI BỘ NHỚ";
     showStatus("Không mở được IndexedDB:\n"+error.message,12000);
   }
 }
