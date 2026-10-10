@@ -1,5 +1,4 @@
-
-const CACHE_NAME = "linh-reader-v12";
+const CACHE_NAME = "linh-reader-v13";
 
 const APP_FILES = [
   "./",
@@ -9,7 +8,7 @@ const APP_FILES = [
   "./lib/pdf.worker.min.js"
 ];
 
-self.addEventListener("install",event => {
+self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(APP_FILES))
@@ -17,29 +16,27 @@ self.addEventListener("install",event => {
   );
 });
 
-self.addEventListener("activate",event => {
+self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(names =>
-      Promise.all(
+    caches.keys()
+      .then(names => Promise.all(
         names
           .filter(name =>
-            name.startsWith("linh-reader-")
-            && name!==CACHE_NAME
+            name.startsWith("linh-reader-") &&
+            name !== CACHE_NAME
           )
           .map(name => caches.delete(name))
-      )
-    ).then(() => self.clients.claim())
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener("fetch",event => {
-  if (event.request.method!=="GET") return;
+self.addEventListener("fetch", event => {
+  if (event.request.method !== "GET") return;
 
   const url = new URL(event.request.url);
 
-  if (url.origin!==self.location.origin) {
-    return;
-  }
+  if (url.origin !== self.location.origin) return;
 
   event.respondWith(
     fetch(event.request)
@@ -49,9 +46,7 @@ self.addEventListener("fetch",event => {
 
           event.waitUntil(
             caches.open(CACHE_NAME)
-              .then(cache =>
-                cache.put(event.request,copy)
-              )
+              .then(cache => cache.put(event.request, copy))
           );
         }
 
@@ -60,12 +55,12 @@ self.addEventListener("fetch",event => {
       .catch(async () => {
         const cached = await caches.match(
           event.request,
-          {ignoreSearch:true}
+          { ignoreSearch: true }
         );
 
         if (cached) return cached;
 
-        if (event.request.mode==="navigate") {
+        if (event.request.mode === "navigate") {
           return caches.match("./index.html");
         }
 
